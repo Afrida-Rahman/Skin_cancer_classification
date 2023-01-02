@@ -1,1 +1,10 @@
 .idea/
+data/
+
+## breaSwinTNet
+breaSwinTNet/customized_data/
+breaSwinTNet/model/
+breaSwinTNet/checkpoint/
+
+## HuggingFace
+HuggingFace/model/
