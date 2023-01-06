@@ -55,7 +55,7 @@ data_augmentation = keras.Sequential(
     ],
     name="data_augmentation",
 )
-# Compute the mean and the variance of the training data for normalization.
+# Compute the mean and the variance of the training raw_data for normalization.
 data_augmentation.layers[0].adapt(x_train)
 print(x_train.shape)
 
@@ -202,7 +202,7 @@ diag_attn_mask = tf.cast([diag_attn_mask], dtype=tf.int8)
 
 def create_vit_classifier(vanilla=False):
     inputs = layers.Input(shape=INPUT_SHAPE)
-    # Augment data.
+    # Augment raw_data.
     augmented = data_augmentation(inputs)
     # Create patches.
     (tokens, _) = ShiftedPatchTokenization(vanilla=vanilla)(augmented)

@@ -1,7 +1,7 @@
-# source: https://medium.com/@yanis.labrak/how-to-train-a-custom-vision-transformer-vit-image-classifier-to-help-endoscopists-in-under-5-min-2e7e4110a353
-# Xray source: https://huggingface.co/blog/vision-transformers
-# https://github.com/qanastek/HugsVision/blob/main/recipes/kvasir_v2/binary_classification/Kvasir_v2_Image_Classifier.ipynb
-
+# # source: https://medium.com/@yanis.labrak/how-to-train-a-custom-vision-transformer-vit-image-classifier-to-help-endoscopists-in-under-5-min-2e7e4110a353
+# # Xray source: https://huggingface.co/blog/vision-transformers
+# # https://github.com/qanastek/HugsVision/blob/main/recipes/kvasir_v2/binary_classification/Kvasir_v2_Image_Classifier.ipynb
+# 
 from hugsvision.dataio.VisionDataset import VisionDataset
 from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from transformers import ViTFeatureExtractor, ViTForImageClassification, AutoFeatureExtractor
@@ -28,30 +28,26 @@ configuration = ViTConfig(hidden_size=1024, num_hidden_layers=24, intermediate_s
 
 # Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
 model = ViTModel(configuration)
+epoch = 20
 huggingface_model = 'google/vit-base-patch16-224-in21k'
 trainer = VisionClassifierTrainer(
-    model_name="ViT_224_Train_Without_Aug",
+    model_name="ViT_224_Train_Without_Aug"+str(epoch)+"e",
     train=train,
     test=test,
     output_dir="../model/",
-    max_epochs=4,
+    max_epochs=epoch,
     batch_size=8,  # On RTX 2080 Ti
     lr=2e-5,
     fp16=False,
     model=ViTForImageClassification.from_pretrained(huggingface_model,
                                                     num_labels=len(label2id),
                                                     label2id=label2id,
-                                                    id2label=id2label,
-                                                    ignore_mismatched_sizes=True
+                                                    id2label=id2label
                                                     ),
-    feature_extractor= ViTFeatureExtractor(do_resize=True, size=224, do_normalize=True)
+    feature_extractor= ViTFeatureExtractor.from_pretrained(huggingface_model)
 )
 
 ref, hyp = trainer.evaluate_f1_score()
-print("ref : ")
-print(ref)
-print("\nHyp: ")
-print(hyp)
 
 #
 # test_img = np.load("raw_data/test_img_72x72.npy")
@@ -70,5 +66,5 @@ labels = list(label2id.keys())
 df_cm = pd.DataFrame(cm, index=labels, columns=labels)
 
 plt.figure(figsize=(10, 7))
-sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
-plt.savefig("../result/conf_no_aug_vit_large_HAM10k_validation_224.jpg")
+sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="", cmap="Blues")
+plt.savefig("../result/training_conf_"+str(epoch)+"e_no_aug_vit_large_HAM10k_validation_224.jpg")
