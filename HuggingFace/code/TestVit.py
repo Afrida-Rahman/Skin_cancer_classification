@@ -1,3 +1,5 @@
+import os
+
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
 from transformers import AutoFeatureExtractor, ViTForImageClassification, ViTFeatureExtractor
 from glob import glob
@@ -8,12 +10,16 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT_224_TRAIN_WITHOUT_AUG/4_2023-01-06-17-44-14/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT-B_P32_384_TRAIN_WITHOUT_AUG/20_2023-01-06-22-56-02/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-
 result_path = "../result/"
 test_data_path = "../../raw_data/train_test_valid_splitted/test/"
+
+epoch = 20
+model_name = 'ViT-B'
+patch = 32
+resolution = 384
 
 classifier = VisionClassifierInference(
     feature_extractor=ViTFeatureExtractor.from_pretrained(f_path),
@@ -75,18 +81,25 @@ acc = accuracy_score(y_true, y_pred)
 pre = precision_score(y_true, y_pred,average="macro")
 recall = recall_score(y_true, y_pred,average="macro")
 
-classification_r = classification_report(y_true, y_pred, target_names=ctg)
+classification_r = pd.DataFrame(classification_report(y_true, y_pred, target_names=ctg, output_dict=True))
 
 df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
 plt.figure(figsize=(10, 7))
 sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
-plt.savefig(result_path + "conf_no_aug_vit-B_HAM10k_test_224.jpg")
+plt.savefig(result_path + "conf.jpg")
 
 print(classification_r)
 
 cm = [pre,acc,recall]
 df = pd.DataFrame(cm, index=['pre','acc','recall'])
-df.to_csv(result_path+'performance_no_aug_vit-B_HAM10K_test_224.csv')
+
+file_name = f"test_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.xlsx"
+with pd.ExcelWriter(result_path + file_name) as writer:
+    df.to_excel(writer, sheet_name='all_metrics')
+    classification_r.to_excel(writer, sheet_name='metrics_with_labels')
+    worksheet = writer.sheets['all_metrics']
+    worksheet.insert_image('E1',result_path+"conf.jpg")
+os.remove(result_path+"conf.jpg")
 
 # akiec_label = np.zeros(np.shape(akiec_mat)[0])
 # bcc_label = np.ones(np.shape(bcc_mat)[0])
