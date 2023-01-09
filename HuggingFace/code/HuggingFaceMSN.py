@@ -29,10 +29,10 @@ configuration = ViTMSNConfig()
 
 # Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
 model = ViTMSNModel(configuration)
-huggingface_model= 'facebook/vit-msn-small'
+huggingface_model= 'facebook/vit-msn-large'
 epoch = 10
 model_name = 'ViT-MSN'
-resolution = 'small'
+resolution = 'large'
 trainer = VisionClassifierTrainer(
     model_name=f"{model_name}_{resolution}_e{epoch}",
     train=train,
@@ -42,12 +42,14 @@ trainer = VisionClassifierTrainer(
     batch_size=8,  # On RTX 2080 Ti
     lr=1e-5,
     fp16=False,
-    model=ViTMSNForImageClassification.from_pretrained(huggingface_model,
-                                                    num_labels=len(label2id),
-                                                    label2id=label2id,
-                                                    id2label=id2label,
-                                                    ignore_mismatched_sizes=True
-                                                    ),
+    model=ViTMSNForImageClassification.from_pretrained
+    (
+        huggingface_model,
+        num_labels=len(label2id),
+        label2id=label2id,
+        id2label=id2label,
+        ignore_mismatched_sizes=True
+    ),
     feature_extractor= AutoImageProcessor.from_pretrained(huggingface_model)
 )
 

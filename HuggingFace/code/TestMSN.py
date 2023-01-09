@@ -18,7 +18,7 @@ test_data_path = "../../raw_data/train_test_valid_splitted/test/"
 
 epoch = 10
 model_name = 'ViT-MSN'
-resolution = 'small'
+resolution = 'large'
 
 classifier = VisionClassifierInference(
     feature_extractor=AutoImageProcessor.from_pretrained(f_path),
