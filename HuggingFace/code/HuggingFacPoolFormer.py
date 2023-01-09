@@ -1,12 +1,16 @@
 # # source: https://medium.com/@yanis.labrak/how-to-train-a-custom-vision-transformer-vit-image-classifier-to-help-endoscopists-in-under-5-min-2e7e4110a353
 # # Xray source: https://huggingface.co/blog/vision-transformers
 # # https://github.com/qanastek/HugsVision/blob/main/recipes/kvasir_v2/binary_classification/Kvasir_v2_Image_Classifier.ipynb
-# 
+#
+import os
 from hugsvision.dataio.VisionDataset import VisionDataset
 from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from transformers import PoolFormerFeatureExtractor, PoolFormerForImageClassification
-import numpy as np
 from transformers import PoolFormerConfig, PoolFormerModel
+import pandas as pd
+import seaborn as sn
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
     "../../raw_data/train_test_valid_splitted/train/",
@@ -50,7 +54,7 @@ configuration = PoolFormerConfig()
 model = PoolFormerModel(configuration)
 configuration = model.config
 huggingface_model= 'sail/poolformer_m48'
-epoch = 20
+epoch = 5
 model_name = 'PoolFormer'
 model_variant = 'm48'
 trainer = VisionClassifierTrainer(
@@ -79,22 +83,31 @@ print(ref)
 print("\nHyp: ")
 print(hyp)
 
-#
-# test_img = np.load("raw_data/test_img_72x72.npy")
-# test_label = np.load("raw_data/test_label_72x72.npy")
-# print("start testing")
-# trainer.testing("raw_data/train_test_splitted/val/nv/ISIC_0024309.jpg", "0")
-# trainer.test("raw_data/train_test_splitted/val/")
 
-import pandas as pd
-import seaborn as sn
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
+result_path = "../result/"
+ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
-cm = confusion_matrix(ref, hyp)
-labels = list(label2id.keys())
-df_cm = pd.DataFrame(cm, index=labels, columns=labels)
+cm = confusion_matrix(y_true=ref, y_pred=hyp)
+acc = accuracy_score(y_true=ref, y_pred=hyp)
+pre = precision_score(y_true=ref, y_pred=hyp, average="macro")
+recall = recall_score(y_true=ref, y_pred=hyp, average="macro")
 
+classification_r = pd.DataFrame(classification_report(ref, hyp, target_names=ctg, output_dict=True))
+
+df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
 plt.figure(figsize=(10, 7))
 sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
-plt.savefig(f"../result/val_conf_{model_name}_{model_variant}_e{epoch}.jpg")
+plt.savefig(result_path + "conf.jpg")
+
+print(classification_r)
+
+m = [pre,acc,recall]
+df = pd.DataFrame(m, index=['pre','acc','recall'])
+
+file_name = f"val_conf_{model_name}_{model_variant}_e{epoch}.xlsx"
+with pd.ExcelWriter(result_path + file_name) as writer:
+    df.to_excel(writer, sheet_name='all_metrics')
+    classification_r.to_excel(writer, sheet_name='metrics_with_labels')
+    worksheet = writer.sheets['all_metrics']
+    worksheet.insert_image('E1',result_path+"conf.jpg")
+os.remove(result_path+"conf.jpg")
