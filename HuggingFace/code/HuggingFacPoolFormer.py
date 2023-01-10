@@ -15,15 +15,15 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
     "../../raw_data/train_test_valid_splitted/train/",
     test_ratio=0,
-    balanced=False,
-    augmentation=False,
+    balanced=True,
+    augmentation=True,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
     "../../raw_data/train_test_valid_splitted/val/",
     test_ratio=0,
-    balanced=False,
-    augmentation=False,
+    balanced=True,
+    augmentation=True,
 )
 
 # Initializing a ViT vit-base-patch16-224 style configuration
@@ -54,7 +54,7 @@ configuration = PoolFormerConfig()
 model = PoolFormerModel(configuration)
 configuration = model.config
 huggingface_model= 'sail/poolformer_m48'
-epoch = 5
+epoch = 10
 model_name = 'PoolFormer'
 model_variant = 'm48'
 trainer = VisionClassifierTrainer(
@@ -63,7 +63,7 @@ trainer = VisionClassifierTrainer(
     test=test,
     output_dir="../model/",
     max_epochs=epoch,
-    batch_size=8,  # On RTX 2080 Ti
+    batch_size=4,  # On RTX 2080 Ti
     lr=1e-5,
     fp16=False,
     model=PoolFormerForImageClassification.from_pretrained
