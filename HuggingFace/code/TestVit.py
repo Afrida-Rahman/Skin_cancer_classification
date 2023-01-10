@@ -1,3 +1,4 @@
+import json
 import os
 
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
@@ -10,16 +11,19 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT-B_P32_384_TRAIN_WITHOUT_AUG/20_2023-01-06-22-56-02/'
+model_folder = '/Users/sabit/Desktop/Sabit/ViT/Skin_cancer_classification/HuggingFace/model/VIT-L_P32_R384_E10/10_2023-01-09-20-25-55/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
+t_path = model_folder + "trainer/"
 result_path = "../result/"
 test_data_path = "../../raw_data/train_test_valid_splitted/test/"
+config_path = t_path + 'config.json'
 
-epoch = 20
-model_name = 'ViT-B'
-patch = 32
-resolution = 384
+config = json.load(config_path)
+epoch = 10
+model_name = 'ViT-custom'
+patch = config['patch_size']
+resolution = config['image_size']
 
 classifier = VisionClassifierInference(
     feature_extractor=ViTFeatureExtractor.from_pretrained(f_path),

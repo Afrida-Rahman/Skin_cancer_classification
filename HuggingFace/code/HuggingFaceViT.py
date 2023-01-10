@@ -6,6 +6,7 @@ from hugsvision.dataio.VisionDataset import VisionDataset
 from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from transformers import ViTFeatureExtractor, ViTForImageClassification, AutoFeatureExtractor
 import numpy as np
+import PIL
 from transformers import ViTConfig, ViTModel
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
@@ -22,36 +23,55 @@ test, _, _, _ = VisionDataset.fromImageFolder(
     augmentation=False,
 )
 
-# Initializing a ViT vit-base-patch16-224 style configuration
-# configuration = ViTConfig(hidden_size=1024, num_hidden_layers=24, intermediate_size=4096, num_attention_heads=16,
-#                           patch_size=32, image_size=384)
-configuration = ViTConfig()
-
-# Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
-model = ViTModel(configuration)
-huggingface_model= 'google/vit-large-patch32-384'
 epoch = 10
-model_name = 'ViT-L'
-patch = 32
-resolution = 384
-trainer = VisionClassifierTrainer(
-    model_name=f"{model_name}_p{patch}_r{resolution}_e{epoch}",
-    train=train,
-    test=test,
-    output_dir="../model/",
-    max_epochs=epoch,
-    batch_size=4,  # On RTX 2080 Ti
-    lr=2e-5,
-    fp16=False,
-    model=ViTForImageClassification.from_pretrained(huggingface_model,
-                                                    num_labels=len(label2id),
-                                                    label2id=label2id,
-                                                    id2label=id2label,
-                                                    ignore_mismatched_sizes=True
-                                                    ),
-    feature_extractor= ViTFeatureExtractor.from_pretrained(huggingface_model)
-)
+model_name = 'ViT-custom'
 
+if model_name.__contains__("custom"):
+    # Initializing a ViT vit-base-patch16-224 style configuration
+    configuration = ViTConfig(hidden_size=1024, num_hidden_layers=24, intermediate_size=4096, num_attention_heads=16,
+                              patch_size=9, image_size=72, id2label=id2label, label2id=label2id,
+                              num_labels=len(label2id))
+
+    # Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
+    model = ViTModel(configuration)
+    configuration = model.config
+    patch = model.config.patch_size
+    resolution = model.config.image_size
+
+    trainer = VisionClassifierTrainer(
+        model_name=f"{model_name}_p{patch}_r{resolution}_e{epoch}",
+        train=train,
+        test=test,
+        output_dir="../model/",
+        max_epochs=epoch,
+        batch_size=8,  # On RTX 2080 Ti
+        lr=1e-5,
+        fp16=False,
+        model=ViTForImageClassification(config=configuration),
+        feature_extractor= ViTFeatureExtractor(do_resize=True, size=72, do_normalize=True, resample=PIL.Image.Resampling.NEAREST)
+    )
+else:
+    pretrained_model = 'google/vit-large-patch32-384'
+    patch = 32
+    resolution = 384
+    trainer = VisionClassifierTrainer(
+        model_name=f"{model_name}_p{patch}_r{resolution}_e{epoch}",
+        train=train,
+        test=test,
+        output_dir="../model/",
+        max_epochs=epoch,
+        batch_size=4,  # On RTX 2080 Ti
+        lr=2e-5,
+        fp16=False,
+        model=ViTForImageClassification.from_pretrained(pretrained_model,
+                                                        num_labels=len(label2id),
+                                                        label2id=label2id,
+                                                        id2label=id2label,
+                                                        ignore_mismatched_sizes=True
+                                                        ),
+        feature_extractor=ViTFeatureExtractor.from_pretrained(pretrained_model)
+    )
+trainer.training_args.load_best_model_at_end = True
 ref, hyp = trainer.evaluate_f1_score()
 print("ref : ")
 print(ref)
