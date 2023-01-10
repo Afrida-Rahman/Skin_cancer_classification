@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/IMAGEGPT_224_TRAIN_WITHOUT_AUG10E/10_2023-01-10-12-44-27/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/IMAGEGPT_224_10E/10_2023-01-10-12-44-27/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 
