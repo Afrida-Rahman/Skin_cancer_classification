@@ -1,0 +1,155 @@
+Dataset:
+-----------
+paper link: Transfer Learning Using Convolutional Neural Network Architectures for Brain Tumor Classification from MRI Images
+Dataset Link: https://figshare.com/articles/dataset/brain_tumor_dataset/1512427?file=7953679
+paper link : https://cis.ieee.org/images/files/Documents/research-grants/Report_SubhashisBanerjee.pdf
+paper link : https://ieeexplore.ieee.org/document/9519361
+paper link: https://link.springer.com/content/pdf/10.1007/s40998-021-00426-9.pdf#page=21&zoom=100,0,0
+    Dataset link:
+    https://wiki.cancerimagingarchive.net/display/Public/RIDER+NEURO+MRI
+    https://wiki.cancerimagingarchive.net/display/Public/REMBRANDT
+    https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=5309188#5309188eed49afbf8af459ea76fa19586790bb8
+Year wise dataset: https://challenge.isic-archive.com/data/#2020
+
+
+Skin Cancer Detection:
+---------------------------
+The common link: https://challenge.isic-archive.com/data/#2019
+The review paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8160886/(published in may 2021)
+
+Summary and overview of isic dataset: (January 2022)
+https://www.sciencedirect.com/science/article/pii/S1361841521003509
+
+HAM10000
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7753251/#:~:text=A%20deep%20learning%20model%20is%20proposed%20in%20this%20study%20to,distinguishing%20malignant%20and%20benign%20lesions.
+Used: AlexNet
+Acc: 84%
+
+https://reader.elsevier.com/reader/sd/pii/S2352914819302047?token=06F6E62848B38F3053057FF0E6D396F899F4FB89339DAF657CB1CBEC1201BBDF1E880E853E3ADDFF046465AAC04234C3&originRegion=eu-west-1&originCreation=20220809050844
+Used: Squezenet
+Acc: 99.77%
+
+https://www.hindawi.com/journals/jhe/2022/2196096/#results-and-discussion(march 2022)
+Used: XceptionNet
+100% accuracy, 94.05% sensitivity, 97.07% precision, and 95.53%F1-score
+
+https://www.ripublication.com/ijaerspl20/ijaerv15n1spl_02.pdf
+https://www.sciencedirect.com/science/article/pii/S2666827021000177
+Used: AlexNet, ResNet, VGG-16, DenseNet, MobileNet-
+93.16% of training and 91.93% of testing accuracy
+
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8662405/
+Used: XceptioNet
+Acc: 90.44%
+
+https://pure.strath.ac.uk/ws/portalfiles/portal/134360852/Aburaed_etal_ICSPIS_2021_Skin_cancer_classification_model_based_on_VGG19.pdf
+Used: VGG19
+ACC:97
+
+New Dataset link ISIC:
+https://www.isic-archive.com/#!/topWithHeader/onlyHeaderTop/gallery?filter=%5B%5D
+ISIC 2020:
+1. Skin Cancer Disease Detection Using Transfer Learning Technique (June 2022)
+Used:MobilenetV2
+Acc: 98
+
+2. https://arxiv.org/pdf/2103.12068.pdf(2021)
+Used: an ensemble-based deep learning approach
+auc 87
+
+Most Latest Paper on Vision Transformer:
+https://www.mdpi.com/1424-8220/22/11/4008/htm
+
+
+
+Dataset details:
+--------------------
+Initial Stage:
+ISBI 2016: 900
+ISIC 2017: 2000
+ISIC 2018: 10015
+ISIC 2019: 25331
+ISIC 2020: 33126
+
+
+Details of labels: (Train)
+ISBI 2016 (900): benign(727), malignant(173)
+ISIC 2017 (2000): melanoma(374), seborrheic_keratosis(254)
+ISIC 2018 (10015): melanoma(1113), nevus(6705), basal cell carcinoma(514), Actinic keratosis(327), Benign keratosis(1099), Dermatofibroma(115), Vascular lesion(142)
+ISIC 2019(25331): melanoma(4522), nevus(12875), basal cell carcinoma(3323), Actinic keratosis(867), Benign keratosis(2624),Dermatofibroma(239), Vascular lesion(253),Squamous cell carcinoma(628), unk
+ISIC 2020(33126):melanoma(584), nevus(5193)
+benign, malignant(584)
+
+Removal duplicates of year wise image using PHash techniques:
+ISBI 2016: 900 - 2 = 898
+ISIC 2017: 2000 - 4 = 1996
+ISIC 2018: 10015 -21 = 9994
+ISIC 2019: 25331 - 108 = 25223
+ISIC 2020: 33126 - 454 = 32672
+
+Merged and Splitted into classes:
+malignant: 753:
+ISBI_2016: 172:
+ISIC_2020 : 581:
+
+benign:32817
+ISBI 2016 : 726
+ISIC_2020 : 32091
+
+melanoma: 6563
+ISIC_2017 : 371
+ISIC_2018 : 1112
+ISIC_2019 : 4499
+ISIC_2020 : 581
+
+nevus:24706
+ISIC_2020 : 5190
+ISIC_2019 : 12831
+ISIC_2018 : 6685
+
+bcc: 3821
+ISIC_2019 : 3307
+ISIC_2018 : 514
+
+bkl: 3708
+ISIC_2019 : 2609
+ISIC_2018 : 1099
+
+
+Removal duplicates of classwise image:
+bcc: 3821-514 = 3307
+benign:32817 - 0 =32817
+bkl: 3708 - 1099 = 2609
+melanoma: 6563- 1423 = 5140
+malignant: 753 - 0 = 753
+nevus: 24706 - 6694 = 18012
+
+classification:
+Binary class:
+malignant: 753
+benign:32817
+
+Multiclass:
+bcc: 3307
+bkl: 2609
+melanoma: 5140
+nevus:18012
+
+Split into train and test:
+Train:
+bcc: 2314
+benign: 22971
+bkl: 1826
+melanoma: 3597
+malignant: 527
+nevus: 12608
+val :
+bcc: 993
+benign: 9846
+bkl: 783
+melanoma: 1543
+malignant: 226
+nevus: 5404
+
+
+

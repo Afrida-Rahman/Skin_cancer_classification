@@ -1,7 +1,7 @@
 import os
 
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
-from transformers import AutoFeatureExtractor, ViTForImageClassification, ViTFeatureExtractor
+from transformers import PoolFormerForImageClassification, PoolFormerFeatureExtractor
 from glob import glob
 import numpy as np
 import pandas as pd
@@ -10,20 +10,20 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT-B_P32_384_TRAIN_WITHOUT_AUG/20_2023-01-06-22-56-02/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/POOLFORMER_M48_E20/20_2023-01-09-20-29-25/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
+
 result_path = "../result/"
 test_data_path = "../../raw_data/train_test_valid_splitted/test/"
 
 epoch = 20
-model_name = 'ViT-B'
-patch = 32
-resolution = 384
+model_name = 'PoolFormer'
+model_variant = 'm48'
 
 classifier = VisionClassifierInference(
-    feature_extractor=ViTFeatureExtractor.from_pretrained(f_path),
-    model=ViTForImageClassification.from_pretrained(m_path),
+    feature_extractor=PoolFormerFeatureExtractor.from_pretrained(f_path),
+    model=PoolFormerForImageClassification.from_pretrained(m_path),
 )
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
@@ -90,10 +90,10 @@ plt.savefig(result_path + "conf.jpg")
 
 print(classification_r)
 
-cm = [pre,acc,recall]
-df = pd.DataFrame(cm, index=['pre','acc','recall'])
+m = [pre,acc,recall]
+df = pd.DataFrame(m, index=['pre','acc','recall'])
 
-file_name = f"test_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.xlsx"
+file_name = f"test_conf_{model_name}_{model_variant}_e{epoch}.xlsx"
 with pd.ExcelWriter(result_path + file_name) as writer:
     df.to_excel(writer, sheet_name='all_metrics')
     classification_r.to_excel(writer, sheet_name='metrics_with_labels')

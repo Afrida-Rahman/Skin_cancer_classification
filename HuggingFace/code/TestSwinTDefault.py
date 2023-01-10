@@ -1,5 +1,8 @@
+import os
+
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
-from transformers import AutoFeatureExtractor, Swinv2ForImageClassification, CvtForImageClassification
+from transformers import AutoFeatureExtractor, Swinv2ForImageClassification, CvtForImageClassification, \
+    SwinForImageClassification
 from glob import glob
 import numpy as np
 import pandas as pd
@@ -8,16 +11,22 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/skin_cancer_classification/HuggingFace/model/TRAIN_WITHOUT_AUG_384/30_2023-01-02-09-13-04/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/swin/SWIN_P4_W12_R384_E10/10_2023-01-07-22-03-00/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 
-result_path = "/home/afrida/Documents/skin_cancer_classification/HuggingFace/result/"
-test_data_path = "/home/afrida/Documents/skin_cancer_classification/raw_data/train_test_splitted/val/"
+result_path = "../result/swin/"
+test_data_path = "../../raw_data/train_test_valid_splitted/test/"
+
+epoch = 10
+model_name = 'Swin'
+patch = 4
+resolution = 384
+window = 12
 
 classifier = VisionClassifierInference(
     feature_extractor=AutoFeatureExtractor.from_pretrained(f_path),
-    model=CvtForImageClassification.from_pretrained(m_path),
+    model=SwinForImageClassification.from_pretrained(m_path),
 )
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
@@ -28,7 +37,7 @@ def separate_class_label(file_path, ctg):
     y_true, y_pred = [], []
     for i in folders:
         label = classifier.predict(img_path=i)
-        y_true.append(i.split('/')[8])
+        y_true.append(i.split('/')[5])
         y_pred.append(label)
         print("Predicted class:", label)
     return y_true, y_pred
@@ -75,18 +84,25 @@ acc = accuracy_score(y_true, y_pred)
 pre = precision_score(y_true, y_pred,average="macro")
 recall = recall_score(y_true, y_pred,average="macro")
 
-classification_r = classification_report(y_true, y_pred, target_names=ctg)
+classification_r = pd.DataFrame(classification_report(y_true, y_pred, target_names=ctg, output_dict=True))
 
 df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
 plt.figure(figsize=(10, 7))
 sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
-plt.savefig(result_path + "conf_no_aug_cvt-13_HAM10k_test_384.jpg")
+plt.savefig(result_path + "conf.jpg")
 
 print(classification_r)
 
-cm = [pre,acc,recall]
-df = pd.DataFrame(cm, index=['pre','acc','recall'])
-df.to_csv(result_path+'performance_no_aug_cvt-13_HAM10K_test_384.csv')
+m = [pre,acc,recall]
+df = pd.DataFrame(m, index=['pre','acc','recall'])
+
+file_name = f"test_conf_{model_name}_p{patch}_w{window}_r{resolution}_e{epoch}.xlsx"
+with pd.ExcelWriter(result_path + file_name) as writer:
+    df.to_excel(writer, sheet_name='all_metrics')
+    classification_r.to_excel(writer, sheet_name='metrics_with_labels')
+    worksheet = writer.sheets['all_metrics']
+    worksheet.insert_image('E1',result_path+"conf.jpg")
+os.remove(result_path+"conf.jpg")
 
 # akiec_label = np.zeros(np.shape(akiec_mat)[0])
 # bcc_label = np.ones(np.shape(bcc_mat)[0])

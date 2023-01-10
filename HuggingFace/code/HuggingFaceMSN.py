@@ -4,9 +4,9 @@
 # 
 from hugsvision.dataio.VisionDataset import VisionDataset
 from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
-from transformers import ViTFeatureExtractor, ViTForImageClassification, AutoFeatureExtractor
+from transformers import AutoImageProcessor, ViTMSNForImageClassification
 import numpy as np
-from transformers import ViTConfig, ViTModel
+from transformers import ViTMSNConfig, ViTMSNModel
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
     "../../raw_data/train_test_valid_splitted/train/",
@@ -25,31 +25,32 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 # Initializing a ViT vit-base-patch16-224 style configuration
 # configuration = ViTConfig(hidden_size=1024, num_hidden_layers=24, intermediate_size=4096, num_attention_heads=16,
 #                           patch_size=32, image_size=384)
-configuration = ViTConfig()
+configuration = ViTMSNConfig()
 
 # Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
-model = ViTModel(configuration)
-huggingface_model= 'google/vit-large-patch32-384'
+model = ViTMSNModel(configuration)
+huggingface_model= 'facebook/vit-msn-large'
 epoch = 10
-model_name = 'ViT-L'
-patch = 32
-resolution = 384
+model_name = 'ViT-MSN'
+resolution = 'large'
 trainer = VisionClassifierTrainer(
-    model_name=f"{model_name}_p{patch}_r{resolution}_e{epoch}",
+    model_name=f"{model_name}_{resolution}_e{epoch}",
     train=train,
     test=test,
     output_dir="../model/",
     max_epochs=epoch,
-    batch_size=4,  # On RTX 2080 Ti
-    lr=2e-5,
+    batch_size=8,  # On RTX 2080 Ti
+    lr=1e-5,
     fp16=False,
-    model=ViTForImageClassification.from_pretrained(huggingface_model,
-                                                    num_labels=len(label2id),
-                                                    label2id=label2id,
-                                                    id2label=id2label,
-                                                    ignore_mismatched_sizes=True
-                                                    ),
-    feature_extractor= ViTFeatureExtractor.from_pretrained(huggingface_model)
+    model=ViTMSNForImageClassification.from_pretrained
+    (
+        huggingface_model,
+        num_labels=len(label2id),
+        label2id=label2id,
+        id2label=id2label,
+        ignore_mismatched_sizes=True
+    ),
+    feature_extractor= AutoImageProcessor.from_pretrained(huggingface_model)
 )
 
 ref, hyp = trainer.evaluate_f1_score()
@@ -76,4 +77,4 @@ df_cm = pd.DataFrame(cm, index=labels, columns=labels)
 
 plt.figure(figsize=(10, 7))
 sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
-plt.savefig(f"../result/val_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.jpg")
+plt.savefig(f"../result/val_conf_{model_name}_{resolution}_e{epoch}.jpg")
