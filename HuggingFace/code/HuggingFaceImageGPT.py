@@ -1,12 +1,17 @@
 # # source: https://medium.com/@yanis.labrak/how-to-train-a-custom-vision-transformer-vit-image-classifier-to-help-endoscopists-in-under-5-min-2e7e4110a353
 # # Xray source: https://huggingface.co/blog/vision-transformers
 # # https://github.com/qanastek/HugsVision/blob/main/recipes/kvasir_v2/binary_classification/Kvasir_v2_Image_Classifier.ipynb
-# 
+#
+import os
+
 from hugsvision.dataio.VisionDataset import VisionDataset
 from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from transformers import ImageGPTImageProcessor, ImageGPTForImageClassification
-import numpy as np
 from transformers import ImageGPTConfig, ImageGPTModel
+import pandas as pd
+import seaborn as sn
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
     "../../raw_data/train_test_valid_splitted/train/",
@@ -28,6 +33,8 @@ configuration = ImageGPTConfig()
 # Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
 model = ImageGPTModel(configuration)
 epoch = 10
+model_name = 'ImageGPT_Small'
+
 huggingface_model = 'openai/imagegpt-small'
 trainer = VisionClassifierTrainer(
     model_name="ImageGPT_224_Train_Without_Aug"+str(epoch)+"e",
@@ -35,7 +42,7 @@ trainer = VisionClassifierTrainer(
     test=test,
     output_dir="../model/",
     max_epochs=epoch,
-    batch_size=8,  # On RTX 2080 Ti
+    batch_size=1,  # On RTX 2080 Ti
     lr=2e-5,
     fp16=False,
     model=ImageGPTForImageClassification.from_pretrained(huggingface_model,
@@ -48,22 +55,30 @@ trainer = VisionClassifierTrainer(
 
 ref, hyp = trainer.evaluate_f1_score()
 
-#
-# test_img = np.load("raw_data/test_img_72x72.npy")
-# test_label = np.load("raw_data/test_label_72x72.npy")
-# print("start testing")
-# trainer.testing("raw_data/train_test_splitted/val/nv/ISIC_0024309.jpg", "0")
-# trainer.test("raw_data/train_test_splitted/val/")
+result_path = "../result/"
+ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
-import pandas as pd
-import seaborn as sn
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_true=ref, y_pred=hyp)
+acc = accuracy_score(y_true=ref, y_pred=hyp)
+pre = precision_score(y_true=ref, y_pred=hyp, average="macro")
+recall = recall_score(y_true=ref, y_pred=hyp, average="macro")
 
-cm = confusion_matrix(ref, hyp)
-labels = list(label2id.keys())
-df_cm = pd.DataFrame(cm, index=labels, columns=labels)
+classification_r = pd.DataFrame(classification_report(ref, hyp, target_names=ctg, output_dict=True))
 
+df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
 plt.figure(figsize=(10, 7))
-sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="", cmap="Blues")
-plt.savefig("../result/training_conf_"+str(epoch)+"e_no_aug_image-gpt_HAM10k_validation_224.jpg")
+sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
+plt.savefig(result_path + "conf.jpg")
+
+print(classification_r)
+
+m = [pre,acc,recall]
+df = pd.DataFrame(m, index=['pre','acc','recall'])
+
+file_name = f"val_conf_{model_name}_e{epoch}.xlsx"
+with pd.ExcelWriter(result_path + file_name) as writer:
+    df.to_excel(writer, sheet_name='all_metrics')
+    classification_r.to_excel(writer, sheet_name='metrics_with_labels')
+    worksheet = writer.sheets['all_metrics']
+    worksheet.insert_image('E1',result_path+"conf.jpg")
+os.remove(result_path+"conf.jpg")
