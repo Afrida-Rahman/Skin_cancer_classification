@@ -1,8 +1,7 @@
 import os
 
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
-from transformers import AutoFeatureExtractor, Swinv2ForImageClassification, CvtForImageClassification, \
-    SwinForImageClassification
+from transformers import AutoImageProcessor, ViTMSNForImageClassification
 from glob import glob
 import numpy as np
 import pandas as pd
@@ -11,22 +10,19 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/swin/SWIN_P4_W12_R384_E10/10_2023-01-07-22-03-00/'
+model_folder = '/Users/sabit/Desktop/Sabit/ViT/Skin_cancer_classification/HuggingFace/model/VIT-MSN_SMALL_E10/10_2023-01-07-23-19-24/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-
-result_path = "../result/swin/"
+result_path = "../result/"
 test_data_path = "../../raw_data/train_test_valid_splitted/test/"
 
 epoch = 10
-model_name = 'Swin'
-patch = 4
-resolution = 384
-window = 12
+model_name = 'ViT-MSN'
+resolution = 'large'
 
 classifier = VisionClassifierInference(
-    feature_extractor=AutoFeatureExtractor.from_pretrained(f_path),
-    model=SwinForImageClassification.from_pretrained(m_path),
+    feature_extractor=AutoImageProcessor.from_pretrained(f_path),
+    model=ViTMSNForImageClassification.from_pretrained(m_path),
 )
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
@@ -93,10 +89,10 @@ plt.savefig(result_path + "conf.jpg")
 
 print(classification_r)
 
-m = [pre,acc,recall]
-df = pd.DataFrame(m, index=['pre','acc','recall'])
+cm = [pre,acc,recall]
+df = pd.DataFrame(cm, index=['pre','acc','recall'])
 
-file_name = f"test_conf_{model_name}_p{patch}_w{window}_r{resolution}_e{epoch}.xlsx"
+file_name = f"test_conf_{model_name}_{resolution}_e{epoch}.xlsx"
 with pd.ExcelWriter(result_path + file_name) as writer:
     df.to_excel(writer, sheet_name='all_metrics')
     classification_r.to_excel(writer, sheet_name='metrics_with_labels')

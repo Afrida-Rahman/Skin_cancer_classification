@@ -8,3 +8,7 @@ breaSwinTNet/checkpoint/
 
 ## HuggingFace
 HuggingFace/model/
+
+## combined_dataset
+combined_dataset/data/
+combined_dataset/model/
