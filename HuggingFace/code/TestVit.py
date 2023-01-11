@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT-CUSTOM_P9_R72_E10/10_2023-01-10-19-36-43/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT-CUSTOM_P9_R72_E50/50_2023-01-10-23-02-29/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 t_path = model_folder + "trainer/"
@@ -20,7 +20,7 @@ test_data_path = "../../raw_data/train_test_valid_splitted/test/"
 config_path = t_path + 'config.json'
 cfg_file = open(config_path)
 config = json.load(cfg_file)
-epoch = 10
+epoch = 50
 model_name = 'ViT-custom'
 patch = config['patch_size']
 resolution = config['image_size']
