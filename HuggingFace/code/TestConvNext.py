@@ -2,7 +2,7 @@ import json
 import os
 
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
-from transformers import AutoFeatureExtractor, ViTForImageClassification, ViTFeatureExtractor
+from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification
 from glob import glob
 import numpy as np
 import pandas as pd
@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT-CUSTOM_P9_R72_E50/50_2023-01-10-23-02-29/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/CONVNEXT-XL_P4_R224_E20/20_2023-01-11-16-16-48/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 t_path = model_folder + "trainer/"
@@ -20,14 +20,14 @@ test_data_path = "../../raw_data/train_test_valid_splitted/test/"
 config_path = t_path + 'config.json'
 cfg_file = open(config_path)
 config = json.load(cfg_file)
-epoch = 50
-model_name = 'ViT-custom'
+epoch = 20
+model_name = 'ConvNext-XL'
 patch = config['patch_size']
 resolution = config['image_size']
 
 classifier = VisionClassifierInference(
-    feature_extractor=ViTFeatureExtractor.from_pretrained(f_path),
-    model=ViTForImageClassification.from_pretrained(m_path),
+    feature_extractor=ConvNextFeatureExtractor.from_pretrained(f_path),
+    model=ConvNextForImageClassification.from_pretrained(m_path),
 )
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']

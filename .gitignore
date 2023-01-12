@@ -1,5 +1,6 @@
 .idea/
 raw_data/
+aug_data/
 
 ## breaSwinTNet
 breaSwinTNet/customized_data/
@@ -12,3 +13,4 @@ HuggingFace/model/
 ## combined_dataset
 combined_dataset/data/
 combined_dataset/model/
+
