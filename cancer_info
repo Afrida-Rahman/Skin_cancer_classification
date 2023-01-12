@@ -1,3 +1,10 @@
+Transformer related resource:
+-----------------------------
+1.source: https://medium.com/@yanis.labrak/how-to-train-a-custom-vision-transformer-vit-image-classifier-to-help-endoscopists-in-under-5-min-2e7e4110a353
+2.Xray source: https://huggingface.co/blog/vision-transformers
+3.https://github.com/qanastek/HugsVision/blob/main/recipes/kvasir_v2/binary_classification/Kvasir_v2_Image_Classifier.ipynb
+
+
 Dataset:
 -----------
 paper link: Transfer Learning Using Convolutional Neural Network Architectures for Brain Tumor Classification from MRI Images

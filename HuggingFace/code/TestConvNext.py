@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/CONVNEXT-XL_P4_R224_E20/20_2023-01-11-16-16-48/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/CONVNEXT-L_P4_R224_E3/3_2023-01-12-13-52-09/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 t_path = model_folder + "trainer/"
@@ -20,8 +20,8 @@ test_data_path = "../../raw_data/train_test_valid_splitted/test/"
 config_path = t_path + 'config.json'
 cfg_file = open(config_path)
 config = json.load(cfg_file)
-epoch = 20
-model_name = 'ConvNext-XL'
+epoch = 3
+model_name = 'ConvNext-L'
 patch = config['patch_size']
 resolution = config['image_size']
 

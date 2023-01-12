@@ -58,3 +58,11 @@ typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_ext
 urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1669259737463/work
 yarl==1.8.2
 zipp @ file:///home/conda/feedstock_root/build_artifacts/zipp_1669453021653/work
+
+numpy~=1.24.1
+tensorflow~=2.11.0
+seaborn~=0.12.2
+pandas~=1.5.2
+keras~=2.11.0
+imageio~=2.19.3
+imgaug~=0.4.0

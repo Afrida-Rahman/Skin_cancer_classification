@@ -29,7 +29,7 @@ test, _, _, _ = VisionDataset.fromImageFolder(
     augmentation=False,
 )
 
-epoch = 20
+epoch = 3
 model_name = 'ConvNext-XL'
 
 if model_name.__contains__("custom"):
