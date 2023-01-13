@@ -25,7 +25,7 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 )
 
 epoch = 10
-model_name = 'ViT-L'
+model_name = 'ViT_L'
 
 # for pretrained model only
 model_path = "../model/vit/"

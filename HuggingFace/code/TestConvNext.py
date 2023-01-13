@@ -11,19 +11,23 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/CONVNEXT-L_P4_R224_E3/3_2023-01-12-13-52-09/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/CONVNEXT_XL_AUG_P4_R224_E5/5_2023-01-12-19-30-00/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 t_path = model_folder + "trainer/"
-result_path = "../result/"
-test_data_path = "../../raw_data/train_test_valid_splitted/test/"
-config_path = t_path + 'config.json'
-cfg_file = open(config_path)
-config = json.load(cfg_file)
-epoch = 3
-model_name = 'ConvNext-L'
-patch = config['patch_size']
-resolution = config['image_size']
+result_path = "../result"
+test_data_path = "../../aug_data/train_test_valid_splitted/test/"
+# config_path = t_path + 'config.json'
+# cfg_file = open(config_path)
+# config = json.load(cfg_file)
+
+epoch = 5
+model_name = 'ConvNext_XL_aug'
+# patch = config['patch_size']
+# resolution = config['image_size']
+
+patch = 4
+resolution = 224
 
 classifier = VisionClassifierInference(
     feature_extractor=ConvNextFeatureExtractor.from_pretrained(f_path),
@@ -104,11 +108,3 @@ with pd.ExcelWriter(result_path + file_name) as writer:
     worksheet = writer.sheets['all_metrics']
     worksheet.insert_image('E1',result_path+"conf.jpg")
 os.remove(result_path+"conf.jpg")
-
-# akiec_label = np.zeros(np.shape(akiec_mat)[0])
-# bcc_label = np.ones(np.shape(bcc_mat)[0])
-# bkl_label = 2*np.ones(np.shape(bkl_mat)[0])
-# df_label = 3*np.ones(np.shape(df_mat)[0])
-# mel_label = 4*np.ones(np.shape(mel_mat)[0])
-# nv_label = 5*np.ones(np.shape(nv_mat)[0])
-# vasc_label = 6*np.ones(np.shape(vasc_mat)[0])

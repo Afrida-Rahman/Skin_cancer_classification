@@ -1,3 +1,5 @@
+import os
+
 import cv2
 from PIL import Image
 from glob import glob
@@ -5,12 +7,13 @@ import splitfolders
 import numpy as np
 from tensorflow.keras import utils
 
+os.chdir("..")
+
 
 def split_train_test_val():
-    root = "../raw_data/"
-    splitfolders.ratio(input=root + "class_separated_data",
-                       output=root + "train_test_valid_splitted",
-                       seed=100, ratio=(.7,.2,.1), group_prefix=None)
+    splitfolders.ratio(input="aug_data/balanced/class_separated_data",
+                       output="aug_data/balanced/train_test_val",
+                       seed=100, ratio=(.7, .2, .1), group_prefix=None)
 
 
 def separate_class_label(file_path, ctg):

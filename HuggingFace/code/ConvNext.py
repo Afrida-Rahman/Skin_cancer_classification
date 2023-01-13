@@ -15,22 +15,43 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 import PIL
 from transformers import ConvNextConfig, ConvNextModel
 
+# train, _, id2label, label2id = VisionDataset.fromImageFolder(
+#     "../../raw_data/train_test_valid_splitted/train/",
+#     test_ratio=0,
+#     balanced=False,
+#     augmentation=False,
+# )
+#
+# test, _, _, _ = VisionDataset.fromImageFolder(
+#     "../../raw_data/train_test_valid_splitted/val/",
+#     test_ratio=0,
+#     balanced=False,
+#     augmentation=False,
+# )
+
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/train/",
+    "/home/afrida/Documents/pProjects/Skin_cancer_classification/aug_data/imbalanced/train_test_val/train/",
     test_ratio=0,
-    balanced=False,
+    balanced=True,
     augmentation=False,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/val/",
+    "/home/afrida/Documents/pProjects/Skin_cancer_classification/aug_data/imbalanced/train_test_val/val/",
     test_ratio=0,
-    balanced=False,
+    balanced=True,
     augmentation=False,
 )
 
-epoch = 3
-model_name = 'ConvNext-XL'
+epoch = 10
+model_name = 'ConvNext_XL_aug'
+
+# for pretrained model only
+model_path = "../model/convNext/"
+result_path = "../result/convNext/"
+pretrained_model = 'facebook/convnext-xlarge-224-22k-1k'
+patch = 4
+resolution = 224
 
 if model_name.__contains__("custom"):
     print('CUSTOM RUNNING .....')
@@ -46,7 +67,7 @@ if model_name.__contains__("custom"):
         model_name=f"{model_name}_p{patch}_r{resolution}_e{epoch}",
         train=train,
         test=test,
-        output_dir="../model/",
+        output_dir=model_path,
         max_epochs=epoch,
         batch_size=8,  # On RTX 2080 Ti
         lr=1e-4,
@@ -58,18 +79,14 @@ if model_name.__contains__("custom"):
     )
 else:
     print("pretrained running ....")
-    pretrained_model = 'facebook/convnext-large-224-22k-1k'
-    patch = 4
-    resolution = 224
-
     trainer = VisionClassifierTrainer(
         model_name=f"{model_name}_p{patch}_r{resolution}_e{epoch}",
         train=train,
         test=test,
-        output_dir="../model/",
+        output_dir=model_path,
         max_epochs=epoch,
         batch_size=1,  # On RTX 2080 Ti
-        lr=2e-5,
+        lr=1e-4,
         fp16=False,
         model=ConvNextForImageClassification.from_pretrained(pretrained_model,
                                             num_labels=len(label2id),
@@ -82,7 +99,6 @@ else:
 # trainer.training_args.load_best_model_at_end = True
 ref, hyp = trainer.evaluate_f1_score()
 
-result_path = "../result/"
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
 cm = confusion_matrix(y_true=ref, y_pred=hyp)
