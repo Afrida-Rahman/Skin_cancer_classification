@@ -15,6 +15,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 import PIL
 from transformers import ConvNextConfig, ConvNextModel
 
+
 # train, _, id2label, label2id = VisionDataset.fromImageFolder(
 #     "../../raw_data/train_test_valid_splitted/train/",
 #     test_ratio=0,

@@ -11,17 +11,18 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/CONVNEXT_XL_AUG_P4_R224_E5/5_2023-01-12-19-30-00/'
+os.chdir("..//..")
+model_folder = 'HuggingFace/model/convNext/CONVNEXT_XL_AUG_P4_R224_E10/10_2023-01-13-12-09-08/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 t_path = model_folder + "trainer/"
-result_path = "../result"
-test_data_path = "../../aug_data/train_test_valid_splitted/test/"
+result_path = "HuggingFace/result/convNext/"
+test_data_path = "aug_data/imbalanced/train_test_val/test/"
 # config_path = t_path + 'config.json'
 # cfg_file = open(config_path)
 # config = json.load(cfg_file)
 
-epoch = 5
+epoch = 10
 model_name = 'ConvNext_XL_aug'
 # patch = config['patch_size']
 # resolution = config['image_size']
@@ -41,8 +42,9 @@ def separate_class_label(file_path, ctg):
     folders = glob(file_path + ctg + '/*')
     y_true, y_pred = [], []
     for i in folders:
+        # print(i)
         label = classifier.predict(img_path=i)
-        y_true.append(i.split('/')[5])
+        y_true.append(i.split('/')[4])
         y_pred.append(label)
         print("Predicted class:", label)
     return y_true, y_pred

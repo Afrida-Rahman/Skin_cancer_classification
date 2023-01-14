@@ -11,17 +11,19 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/VIT-CUSTOM_P9_R72_E50/50_2023-01-10-23-02-29/'
+os.chdir("..//..")
+
+model_folder = 'HuggingFace/model/vit/VIT_L_AUG_BALANCED_P32_R384_E20/20_2023-01-14-07-41-51/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 t_path = model_folder + "trainer/"
-result_path = "../result/"
-test_data_path = "../../raw_data/train_test_valid_splitted/test/"
+result_path = "HuggingFace/result/vit/"
+test_data_path = "aug_data/balanced/train_test_val/test/"
 config_path = t_path + 'config.json'
 cfg_file = open(config_path)
 config = json.load(cfg_file)
-epoch = 50
-model_name = 'ViT-custom'
+epoch = 20
+model_name = 'ViT_L_aug_balanced'
 patch = config['patch_size']
 resolution = config['image_size']
 
@@ -38,7 +40,7 @@ def separate_class_label(file_path, ctg):
     y_true, y_pred = [], []
     for i in folders:
         label = classifier.predict(img_path=i)
-        y_true.append(i.split('/')[5])
+        y_true.append(i.split('/')[4])
         y_pred.append(label)
         print("Predicted class:", label)
     return y_true, y_pred
@@ -77,9 +79,6 @@ y_pred = convert_label_to_int(d)
 print(y_true.shape)
 print(y_pred.shape)
 
-# np.save(result_path+"y_true.npy", y_true)
-# np.save(result_path+"y_pred.npy", y_pred)
-
 cm = confusion_matrix(y_true, y_pred)
 acc = accuracy_score(y_true, y_pred)
 pre = precision_score(y_true, y_pred,average="macro")
@@ -104,11 +103,3 @@ with pd.ExcelWriter(result_path + file_name) as writer:
     worksheet = writer.sheets['all_metrics']
     worksheet.insert_image('E1',result_path+"conf.jpg")
 os.remove(result_path+"conf.jpg")
-
-# akiec_label = np.zeros(np.shape(akiec_mat)[0])
-# bcc_label = np.ones(np.shape(bcc_mat)[0])
-# bkl_label = 2*np.ones(np.shape(bkl_mat)[0])
-# df_label = 3*np.ones(np.shape(df_mat)[0])
-# mel_label = 4*np.ones(np.shape(mel_mat)[0])
-# nv_label = 5*np.ones(np.shape(nv_mat)[0])
-# vasc_label = 6*np.ones(np.shape(vasc_mat)[0])
