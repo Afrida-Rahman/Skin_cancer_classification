@@ -26,14 +26,14 @@ os.chdir("..//..")
 # )
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "aug_data/imbalanced/train_test_val/train/",
+    "aug_data/balanced/train_test_val/train/",
     test_ratio=0,
     balanced=False,
     augmentation=False,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "aug_data/imbalanced/train_test_val/val/",
+    "aug_data/balanced/train_test_val/val/",
     test_ratio=0,
     balanced=False,
     augmentation=False,

@@ -15,7 +15,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 import PIL
 from transformers import ConvNextConfig, ConvNextModel
 
-
+os.chdir("..//..")
 # train, _, id2label, label2id = VisionDataset.fromImageFolder(
 #     "../../raw_data/train_test_valid_splitted/train/",
 #     test_ratio=0,
@@ -31,20 +31,20 @@ from transformers import ConvNextConfig, ConvNextModel
 # )
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "/home/afrida/Documents/pProjects/Skin_cancer_classification/aug_data/imbalanced/train_test_val/train/",
+    "aug_data/balanced/train_test_val/train/",
     test_ratio=0,
-    balanced=True,
+    balanced=False,
     augmentation=False,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "/home/afrida/Documents/pProjects/Skin_cancer_classification/aug_data/imbalanced/train_test_val/val/",
+    "aug_data/balanced/train_test_val/val/",
     test_ratio=0,
-    balanced=True,
+    balanced=False,
     augmentation=False,
 )
 
-epoch = 10
+epoch = 7
 model_name = 'ConvNext_XL_aug'
 
 # for pretrained model only
