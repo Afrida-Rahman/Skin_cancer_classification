@@ -1,7 +1,8 @@
+import json
 import os
 
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
-from transformers import AutoFeatureExtractor, Swinv2ForImageClassification, CvtForImageClassification, \
+from transformers import AutoFeatureExtractor, Swinv2ForImageClassification, \
     SwinForImageClassification
 from glob import glob
 import numpy as np
@@ -11,18 +12,22 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/swin/SWIN_P4_W12_R384_E10/10_2023-01-07-22-03-00/'
+os.chdir("..//..")
+
+model_folder = 'HuggingFace/model/swin/SWIN_L_AUG_BALANCED_P4_W12_R384_E5/5_2023-01-14-22-58-01/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-
-result_path = "../result/swin/"
-test_data_path = "../../raw_data/train_test_valid_splitted/test/"
-
+t_path = model_folder + "trainer/"
+result_path = "HuggingFace/result/swin/"
+test_data_path = "aug_data/balanced/train_test_val/test/"
+config_path = t_path + 'config.json'
+cfg_file = open(config_path)
+config = json.load(cfg_file)
 epoch = 10
-model_name = 'Swin'
-patch = 4
-resolution = 384
-window = 12
+model_name = 'Swin_L_aug_balanced'
+patch = config['patch_size']
+resolution = config['image_size']
+window = config['window_size']
 
 classifier = VisionClassifierInference(
     feature_extractor=AutoFeatureExtractor.from_pretrained(f_path),
@@ -37,7 +42,7 @@ def separate_class_label(file_path, ctg):
     y_true, y_pred = [], []
     for i in folders:
         label = classifier.predict(img_path=i)
-        y_true.append(i.split('/')[5])
+        y_true.append(i.split('/')[4])
         y_pred.append(label)
         print("Predicted class:", label)
     return y_true, y_pred

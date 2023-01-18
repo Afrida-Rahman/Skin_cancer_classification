@@ -2,7 +2,7 @@ import json
 import os
 
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
-from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification
+from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification, ConvNextConfig, ConvNextModel
 from glob import glob
 import numpy as np
 import pandas as pd
@@ -11,28 +11,28 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = 'HuggingFace/model/convNext/CONVNEXT_XL_AUG_P4_R224_E10/10_2023-01-13-12-09-08/'
+model_folder = 'HuggingFace/model/convNext/CONVNEXT_XL_AUG_B_P4_R224_E3/3_2023-01-16-14-57-06/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-t_path = model_folder + "trainer/"
 result_path = "HuggingFace/result/convNext/"
-test_data_path = "aug_data/imbalanced/train_test_val/test/"
-# config_path = t_path + 'config.json'
+test_data_path = "aug_data/balanced/train_test_val/val/"
+
+config_path = m_path + 'config.json'
 # cfg_file = open(config_path)
 # config = json.load(cfg_file)
-
-epoch = 10
-model_name = 'ConvNext_XL_aug'
-# patch = config['patch_size']
-# resolution = config['image_size']
-
-patch = 4
-resolution = 224
+config = ConvNextConfig.from_json_file(config_path)
+print(config)
+epoch = 3
+model_name = 'ConvNext_xL_aug_b'
+patch = config.patch_size
+resolution = config.image_size
 
 classifier = VisionClassifierInference(
     feature_extractor=ConvNextFeatureExtractor.from_pretrained(f_path),
-    model=ConvNextForImageClassification.from_pretrained(m_path),
+    model=ConvNextForImageClassification.from_pretrained(m_path, config=config),
+    resolution=resolution
 )
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
@@ -88,8 +88,8 @@ print(y_pred.shape)
 
 cm = confusion_matrix(y_true, y_pred)
 acc = accuracy_score(y_true, y_pred)
-pre = precision_score(y_true, y_pred,average="macro")
-recall = recall_score(y_true, y_pred,average="macro")
+pre = precision_score(y_true, y_pred, average="macro")
+recall = recall_score(y_true, y_pred, average="macro")
 
 classification_r = pd.DataFrame(classification_report(y_true, y_pred, target_names=ctg, output_dict=True))
 
@@ -100,13 +100,13 @@ plt.savefig(result_path + "conf.jpg")
 
 print(classification_r)
 
-cm = [pre,acc,recall]
-df = pd.DataFrame(cm, index=['pre','acc','recall'])
+cm = [pre, acc, recall]
+df = pd.DataFrame(cm, index=['pre', 'acc', 'recall'])
 
-file_name = f"test_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.xlsx"
+file_name = f"Trail_val_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.xlsx"
 with pd.ExcelWriter(result_path + file_name) as writer:
     df.to_excel(writer, sheet_name='all_metrics')
     classification_r.to_excel(writer, sheet_name='metrics_with_labels')
     worksheet = writer.sheets['all_metrics']
-    worksheet.insert_image('E1',result_path+"conf.jpg")
-os.remove(result_path+"conf.jpg")
+    worksheet.insert_image('E1', result_path + "conf.jpg")
+os.remove(result_path + "conf.jpg")
