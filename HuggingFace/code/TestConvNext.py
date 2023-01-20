@@ -1,6 +1,8 @@
 import json
 import os
 
+import torch
+from hugsvision.dataio import VisionDataset
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
 from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification, ConvNextConfig, ConvNextModel
 from glob import glob
@@ -10,10 +12,13 @@ import seaborn as sn
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
+from tqdm import tqdm
+from hugsvision.dataio.VisionDataset import VisionDataset
+
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = 'HuggingFace/model/convNext/CONVNEXT_XL_AUG_B_P4_R224_E3/3_2023-01-16-14-57-06/'
+model_folder = 'HuggingFace/model/convNext/CONVNEXT_XL_AUG_P4_R224_E10/10_2023-01-13-12-09-08/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
 result_path = "HuggingFace/result/convNext/"
@@ -24,65 +29,47 @@ config_path = m_path + 'config.json'
 # config = json.load(cfg_file)
 config = ConvNextConfig.from_json_file(config_path)
 print(config)
-epoch = 3
-model_name = 'ConvNext_xL_aug_b'
+epoch = 10
+model_name = 'ConvNext_XL_aug_b'
 patch = config.patch_size
 resolution = config.image_size
 
-classifier = VisionClassifierInference(
-    feature_extractor=ConvNextFeatureExtractor.from_pretrained(f_path),
-    model=ConvNextForImageClassification.from_pretrained(m_path, config=config),
-    resolution=resolution
+test, _, id2label, label2id = VisionDataset.fromImageFolder(
+    test_data_path,
+    test_ratio=0,
+    balanced=False,
+    augmentation=False,
 )
+
+
+feature_extractor=ConvNextFeatureExtractor.from_pretrained(f_path)
+model=ConvNextForImageClassification.from_pretrained(m_path, config=config)
+resolution=resolution
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
 
-def separate_class_label(file_path, ctg):
-    folders = glob(file_path + ctg + '/*')
-    y_true, y_pred = [], []
-    for i in folders:
-        # print(i)
-        label = classifier.predict(img_path=i)
-        y_true.append(i.split('/')[4])
-        y_pred.append(label)
-        print("Predicted class:", label)
-    return y_true, y_pred
+def evaluate(dataset):
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    all_preds = []
+    all_target = []
 
+    # For each image
+    for image, label in tqdm(dataset):
+        # Compute
+        inputs = feature_extractor(images=image, return_tensors="pt")
+        outputs = model(**inputs)
 
-c, d = [], []
-for i in ctg:
-    a, b = separate_class_label(test_data_path, i)
-    c.extend(a)
-    d.extend(b)
+        # Get predictions from the softmax layer
+        preds = outputs.logits.softmax(1).argmax(1).tolist()
+        all_preds.extend(preds)
 
+        # Get hypothesis
+        all_target.append(label)
 
-def convert_label_to_int(label_list):
-    a = []
-    for i in label_list:
-        if i == "akiec":
-            a.append(0)
-        if i == "bcc":
-            a.append(1)
-        if i == "bkl":
-            a.append(2)
-        if i == "df":
-            a.append(3)
-        if i == "mel":
-            a.append(4)
-        if i == "nv":
-            a.append(5)
-        if i == "vasc":
-            a.append(6)
-    return np.array(a)
+    return all_target, all_preds
 
-
-y_true = convert_label_to_int(c)
-y_pred = convert_label_to_int(d)
-
-print(y_true.shape)
-print(y_pred.shape)
-
+y_true, y_pred = evaluate(test)
 # np.save(result_path+"y_true.npy", y_true)
 # np.save(result_path+"y_pred.npy", y_pred)
 
