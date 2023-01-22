@@ -14,7 +14,8 @@ from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
 from transformers import Trainer, ConvNextForImageClassification, ConvNextFeatureExtractor
 from transformers.training_args import TrainingArguments
-
+import tensorflow as tf
+from tensorflow.python.client import device_lib
 
 class Training:
 
@@ -92,6 +93,10 @@ class Training:
             eval_dataset=self.test,
             data_collator=self.collator,
         )
+
+        print(device_lib.list_local_devices())
+        print(tf.config.list_physical_devices('GPU'))
+        print("Available gpu: " + str(tf.test.is_gpu_available()))
 
         print("Start Training!")
         self.trainer.train()

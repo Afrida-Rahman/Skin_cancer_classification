@@ -6,7 +6,6 @@
 import os
 
 from hugsvision.dataio.VisionDataset import VisionDataset
-from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from transformers import ConvNextForImageClassification, ConvNextFeatureExtractor
 import pandas as pd
 import seaborn as sn
@@ -20,25 +19,25 @@ from transformers import ConvNextConfig, ConvNextModel
 os.chdir("..//..")
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "aug_data/balanced/train_test_val/train/",
+    "raw_data/train_test_val/train/",
     test_ratio=0,
     balanced=False,
     augmentation=False,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "aug_data/balanced/train_test_val/val/",
+    "raw_data/train_test_val/val/",
     test_ratio=0,
     balanced=False,
     augmentation=False,
 )
 
 epoch = 20
-model_name = 'ConvNext_L_aug_b'
+model_name = 'ConvNext_L'
 
 # for pretrained model only
-model_path = "HuggingFace/model/convNext/"
-result_path = "HuggingFace/result/convNext/"
+model_path = "HuggingFace/model/raw/convNext/"
+result_path = "HuggingFace/result/raw/convNext/"
 pretrained_model = 'facebook/convnext-large-224-22k-1k'
 patch = 4
 resolution = 224
@@ -86,7 +85,7 @@ else:
                                                              ),
         feature_extractor=ConvNextFeatureExtractor.from_pretrained(pretrained_model),
         classification_report_digits=4,
-        eval_metric="eval_loss"
+        eval_metric="Accuracy"
 
     )
 ref, hyp = trainer.evaluate_f1_score()
@@ -124,7 +123,7 @@ os.remove(result_path + "conf.jpg")
 print("Start testing .....")
 print()
 ind_test, _, _, _ = VisionDataset.fromImageFolder(
-    "aug_data/balanced/train_test_val/test/",
+    "raw_data/train_test_val/test/",
     test_ratio=0,
     balanced=False,
     augmentation=False,

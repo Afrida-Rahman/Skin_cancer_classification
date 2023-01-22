@@ -12,15 +12,15 @@ from Training import Training
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
 
-epoch = 1
-model_name = 'ConvNext_L_aug_b'
-data_path = "aug_data/balanced/train_test_val"
-model_path = "HuggingFace/model/convNext/"
-result_path = "HuggingFace/result/convNext/"
+epoch = 10
+model_name = 'ConvNext_L'
+data_path = "raw_data/train_test_val"
+model_path = "HuggingFace/model/raw/convnext/"
+result_path = "HuggingFace/result/raw/convnext/"
 pretrained_model = 'facebook/convnext-large-224-22k-1k'
 patch = 4
 resolution = 224
-batch=2
+batch=8
 model = ConvNextModel(ConvNextConfig())
 configuration = model.config
 
@@ -33,7 +33,7 @@ model = ConvNextForImageClassification.from_pretrained(pretrained_model, num_lab
 feature_extractor = ConvNextFeatureExtractor.from_pretrained(pretrained_model)
 
 training = Training(train=train, test=test, model_name=model_name, model_path=model_path, epoch=epoch, batch=batch,
-                    model=model, feature_extractor=feature_extractor, eval_metric="eval_loss",id2label=id2label, label2id=label2id)
+                    model=model, feature_extractor=feature_extractor, eval_metric="accuracy", strategy="steps", id2label=id2label, label2id=label2id, fp16=False)
 training.build_trainer()
 print("trainer ready")
 y_true, y_pred = training.evaluate_f1_score()
