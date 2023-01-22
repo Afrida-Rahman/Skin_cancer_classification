@@ -9,6 +9,7 @@ breaSwinTNet/checkpoint/
 
 ## HuggingFace
 HuggingFace/model/
+HuggingFace/model_old/
 
 ## combined_dataset
 combined_dataset/data/

@@ -11,9 +11,9 @@ os.chdir("..")
 
 
 def split_train_test_val():
-    splitfolders.ratio(input="aug_data/balanced/class_separated_data",
-                       output="aug_data/balanced/train_test_val",
-                       seed=100, ratio=(.7, .2, .1), group_prefix=None)
+    splitfolders.ratio(input="raw_data/class_separated_data",
+                       output="raw_data/train_test_splitted",
+                       seed=100, ratio=(.85, .15), group_prefix=None)
 
 
 def separate_class_label(file_path, ctg):
