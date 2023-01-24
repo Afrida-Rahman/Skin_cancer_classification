@@ -51,7 +51,7 @@ def augmentation(filepath, aug_path):
 file_path = 'raw_data/train_test_splitted/train/'
 aug_path = 'aug_data/imbalanced/train/'
 # ctg = ['akiec', 'bcc', 'df', 'vasc']
-ctg = ['bkl']
+ctg = ['mel']
 
 for i in ctg:
     os.makedirs(aug_path + i)

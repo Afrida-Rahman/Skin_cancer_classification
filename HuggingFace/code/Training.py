@@ -12,17 +12,20 @@ from hugsvision.dataio.ImageClassificationCollator import ImageClassificationCol
 from hugsvision.dataio.VisionDataset import VisionDataset
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
-from transformers import Trainer, ConvNextForImageClassification, ConvNextFeatureExtractor
+from transformers import Trainer
 from transformers.training_args import TrainingArguments
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 
+
 class Training:
 
-    def __init__(self, train="", test="", id2label={},label2id={}, model_name="", model_path="", epoch=0, batch=8, model="",
+    def __init__(self, train="", test="", id2label={}, label2id={}, model_name="", model_path="", epoch=0, batch=8,
+                 model="",
                  feature_extractor="", config="", resolution=224, pretrained_model="", patch=0, lr=1e-4, fp16=True,
                  eval_metric="accuracy", is_best_model=True, test_ratio=0, balanced=False, augmentation=False,
-                 save_total_limit=2, weight_decay=0.01, save_steps=10000, strategy='epoch', classification_report_digits=4):
+                 save_total_limit=2, weight_decay=0.01, save_steps=10000, evaluation_strategy='epoch',
+                 save_strategy='steps', classification_report_digits=4):
 
         self.train = train
         self.test = test
@@ -48,7 +51,8 @@ class Training:
         self.save_total_limit = save_total_limit
         self.weight_decay = weight_decay
         self.save_steps = save_steps
-        self.strategy = strategy
+        self.evaluation_strategy = evaluation_strategy
+        self.save_strategy = save_strategy
         self.classification_report_digits = classification_report_digits
 
     def read_image(self, path):
@@ -78,11 +82,11 @@ class Training:
             num_train_epochs=self.epoch,
             metric_for_best_model=self.eval_metric,
             logging_dir=self.model_path,
-            evaluation_strategy=self.strategy,
+            evaluation_strategy=self.evaluation_strategy,
             load_best_model_at_end=self.is_best_model,
             overwrite_output_dir=True,
             fp16=self.fp16,
-            save_strategy=self.strategy
+            save_strategy=self.save_strategy
         )
 
         print("Trainer building...")
