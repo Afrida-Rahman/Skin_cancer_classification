@@ -16,7 +16,7 @@ from transformers import Trainer
 from transformers.training_args import TrainingArguments
 import tensorflow as tf
 from tensorflow.python.client import device_lib
-
+import numpy as np
 
 class Training:
 
@@ -96,11 +96,8 @@ class Training:
             train_dataset=self.train,
             eval_dataset=self.test,
             data_collator=self.collator,
+            compute_metrics=self.compute_metrics
         )
-
-        print(device_lib.list_local_devices())
-        print(tf.config.list_physical_devices('GPU'))
-        print("Available gpu: " + str(tf.test.is_gpu_available()))
 
         print("Start Training!")
         self.trainer.train()
@@ -112,6 +109,11 @@ class Training:
         print("Model saved at: \033[93m" + self.model_path + "\033[0m")
 
         self.logs_file.close()
+
+    def compute_metrics(self, eval_pred):
+        predictions, labels = eval_pred
+        predictions = np.argmax(predictions, axis=1)
+        return metrics.accuracy_score(y_true=labels, y_pred=predictions)
 
     def compute_metrics(self, y_true, y_pred, result_path, ext):
         ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
