@@ -113,7 +113,8 @@ class Training:
     def compute_metrics(self, eval_pred):
         predictions, labels = eval_pred
         predictions = np.argmax(predictions, axis=1)
-        return metrics.accuracy_score(y_true=labels, y_pred=predictions)
+        res_dict = {'accuracy': metrics.accuracy_score(y_true=labels, y_pred=predictions)}
+        return res_dict
 
     def compute_eval_metrics(self, y_true, y_pred, result_path, ext):
         ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
