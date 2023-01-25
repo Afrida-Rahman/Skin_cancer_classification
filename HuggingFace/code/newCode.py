@@ -12,7 +12,7 @@ from Training import Training
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
 
-epoch = 3
+epoch = 10
 
 train_data_path = "aug_data/imbalanced/train/"
 
@@ -36,12 +36,12 @@ model = ConvNextForImageClassification.from_pretrained(pretrained_model, num_lab
 feature_extractor = ConvNextFeatureExtractor.from_pretrained(pretrained_model)
 
 training = Training(train=train, test=test, model_name=model_name, model_path=model_path, epoch=epoch, batch=batch,
-                    model=model, feature_extractor=feature_extractor, eval_metric="accuracy", is_best_model=False, evaluation_strategy="epoch",save_strategy="steps", id2label=id2label, label2id=label2id, fp16=True)
+                    model=model, feature_extractor=feature_extractor, eval_metric="loss", is_best_model=False, evaluation_strategy="epoch",save_strategy="steps", id2label=id2label, label2id=label2id, fp16=True)
 training.build_trainer()
 print("trainer ready")
 y_true, y_pred = training.evaluate_f1_score()
 print("prediction ready")
-training.compute_metrics(y_true=y_true, y_pred=y_pred, result_path=result_path, ext="val")
+training.compute_eval_metrics(y_true=y_true, y_pred=y_pred, result_path=result_path, ext="val")
 
 ## Sanity Check
 

@@ -115,7 +115,7 @@ class Training:
         predictions = np.argmax(predictions, axis=1)
         return metrics.accuracy_score(y_true=labels, y_pred=predictions)
 
-    def compute_metrics(self, y_true, y_pred, result_path, ext):
+    def compute_eval_metrics(self, y_true, y_pred, result_path, ext):
         ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
         cm = confusion_matrix(y_true=y_true, y_pred=y_pred)
         acc = accuracy_score(y_true=y_true, y_pred=y_pred)
