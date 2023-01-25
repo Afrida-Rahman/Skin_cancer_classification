@@ -14,9 +14,9 @@ os.chdir("..//..")
 
 epoch = 10
 
-train_data_path = "aug_data/imbalanced/train/"
+train_data_path = "aug_data/balanced_MVT/train_test_val/train/"
 
-test_data_path = "raw_data/train_test_splitted/val/"
+test_data_path = "aug_data/balanced_MVT/train_test_val/val/"
 model_path = "HuggingFace/model/aug/convnext/"
 result_path = "HuggingFace/result/aug/convnext/"
 pretrained_model = 'facebook/convnext-large-224-22k-1k'
@@ -25,7 +25,7 @@ resolution = 224
 batch=8
 model = ConvNextModel(ConvNextConfig())
 configuration = model.config
-model_name = f'ConvNext_L_{resolution}r_{epoch}e_{batch}b'
+model_name = f'ConvNext_L_eacc_{resolution}r_{epoch}e_{batch}b'
 
 train, _, id2label, label2id = Training().read_image(path=train_data_path)
 test, _, _, _ = Training().read_image(path=test_data_path)
@@ -36,18 +36,9 @@ model = ConvNextForImageClassification.from_pretrained(pretrained_model, num_lab
 feature_extractor = ConvNextFeatureExtractor.from_pretrained(pretrained_model)
 
 training = Training(train=train, test=test, model_name=model_name, model_path=model_path, epoch=epoch, batch=batch,
-                    model=model, feature_extractor=feature_extractor, eval_metric="loss", is_best_model=False, evaluation_strategy="epoch",save_strategy="steps", id2label=id2label, label2id=label2id, fp16=True)
+                    model=model, feature_extractor=feature_extractor, eval_metric="eval_accuracy", is_best_model=True, evaluation_strategy="epoch",save_strategy="epoch", id2label=id2label, label2id=label2id, fp16=True)
 training.build_trainer()
 print("trainer ready")
 y_true, y_pred = training.evaluate_f1_score()
 print("prediction ready")
 training.compute_eval_metrics(y_true=y_true, y_pred=y_pred, result_path=result_path, ext="val")
-
-## Sanity Check
-
-# print("Start testing .....")
-# print()
-# ind_test, _, _, _ = ReadImage("/test/")
-# test_ref, test_hyp = trainer.evaluate(dataset=ind_test)
-# classification_r = pd.DataFrame(classification_report(test_ref, test_hyp, target_names=ctg, output_dict=True))
-# print(classification_r)

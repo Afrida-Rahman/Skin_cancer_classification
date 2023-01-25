@@ -173,6 +173,11 @@ class Training:
 
             # Get predictions from the softmax layer
             preds = outputs.logits.softmax(1).argmax(1).tolist()
+            proba = outputs.logits.softmax(0).argmax(0).tolist()
+            print(f"logit:: {outputs.logits}")
+            print(f"softmax 0:: {outputs.logits.softmax(0)}")
+            print(f"softmax 1:: {outputs.logits.softmax(1)}")
+            print(f"softmax 0 argmax 0:: {outputs.logits.softmax(0).argmax(0).tolist()}")
             all_preds.extend(preds)
 
             # Get hypothesis
