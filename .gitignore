@@ -1,6 +1,5 @@
 .idea/
-raw_data/
-aug_data/
+data/
 
 ## breaSwinTNet
 breaSwinTNet/customized_data/

@@ -15,7 +15,7 @@ m_path = model_folder + "model_85_15_split/"
 f_path = model_folder + "feature_extractor/"
 
 result_path = "../result/result_85_15_split/"
-test_data_path = "../../raw_data/data_70_20_10_split/test/"
+test_data_path = "../../data/raw_data/data_70_20_10_split/test/"
 
 epoch = 20
 model_name = 'PoolFormer'

@@ -11,7 +11,7 @@ os.chdir("..")
 
 def augmentation(filepath, aug_path):
     input_img = iio.imread(filepath)
-    img = filepath.split('/')[4].split('.')[0]
+    img = filepath.split('/')[5].split('.')[0]
 
     input_hf = Image.fromarray(iaa.Fliplr(p=0.2).augment_image(input_img))
     input_hf.save(aug_path + img + '_hf.jpg')
@@ -51,8 +51,8 @@ def augmentation(filepath, aug_path):
     # jitter_img.save(aug_path + img + '_jitter.jpg')
 
 
-file_path = 'raw_data/data_85_15_split/train/'
-aug_path = 'aug_data/data_85_15_split/imbalanced/train/'
+file_path = 'data/raw_data/data_85_15_split/train/'
+aug_path = 'data/aug_data/data_85_15_split/imbalanced/train/'
 
 ctg = ['akiec', 'bcc', 'df', 'vasc']
 

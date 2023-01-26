@@ -73,7 +73,7 @@ def separate_class_label(file_path, ctg):
 
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
-path = "../raw_data/data_85_15_split/val/"
+path = "../data/raw_data/data_85_15_split/val/"
 a, b = [], []
 for i in ctg:
     y_true, y_pred = separate_class_label(path, i)

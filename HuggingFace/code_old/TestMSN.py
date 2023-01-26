@@ -14,7 +14,7 @@ model_folder = '/Users/sabit/Desktop/Sabit/ViT/Skin_cancer_classification/Huggin
 m_path = model_folder + "model_85_15_split/"
 f_path = model_folder + "feature_extractor/"
 result_path = "../result/result_85_15_split/"
-test_data_path = "../../raw_data/data_70_20_10_split/test/"
+test_data_path = "../../data/raw_data/data_70_20_10_split/test/"
 
 epoch = 10
 model_name = 'ViT-MSN'
