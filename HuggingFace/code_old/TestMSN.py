@@ -10,11 +10,11 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/Users/sabit/Desktop/Sabit/ViT/Skin_cancer_classification/HuggingFace/model/VIT-MSN_SMALL_E10/10_2023-01-07-23-19-24/'
-m_path = model_folder + "model/"
+model_folder = '/Users/sabit/Desktop/Sabit/ViT/Skin_cancer_classification/HuggingFace/model_85_15_split/VIT-MSN_SMALL_E10/10_2023-01-07-23-19-24/'
+m_path = model_folder + "model_85_15_split/"
 f_path = model_folder + "feature_extractor/"
-result_path = "../result/"
-test_data_path = "../../raw_data/train_test_valid_splitted/test/"
+result_path = "../result/result_85_15_split/"
+test_data_path = "../../raw_data/data_70_20_10_split/test/"
 
 epoch = 10
 model_name = 'ViT-MSN'

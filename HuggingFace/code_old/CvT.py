@@ -13,7 +13,7 @@ print("Available gpu: " + str(tf.test.is_gpu_available()))
 
 absolute_path = "/home/afrida/Documents/skin_cancer_classification/"
 train, test, id2label, label2id = VisionDataset.fromImageFolder(
-    absolute_path + "raw_data/train_test_splitted/train/",
+    absolute_path + "raw_data/data_85_15_split/train/",
     test_ratio=0.2,
     balanced=False,
     augmentation=False,
@@ -47,7 +47,7 @@ configuration = CvtConfig(
 
 model = CvtModel(configuration)
 
-# configuration = model.config
+# configuration = model_85_15_split.config
 
 huggingface_model = 'microsoft/cvt-13'
 
@@ -55,7 +55,7 @@ trainer = VisionClassifierTrainer(
     model_name="Train_Without_Aug_384",
     train=train,
     test=test,
-    output_dir=absolute_path + "/HuggingFace/model/",
+    output_dir=absolute_path + "/HuggingFace/model_85_15_split/",
     max_epochs=100,
     batch_size=8,  # On RTX 2080 Ti
     lr=2e-5,
@@ -75,4 +75,4 @@ df_cm = pd.DataFrame(cm, index=labels, columns=labels)
 
 plt.figure(figsize=(10, 7))
 sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
-plt.savefig(absolute_path + "HuggingFace/result/conf_no_aug_cvt-13_HAM10k_validation_384.jpg")
+plt.savefig(absolute_path + "HuggingFace/result_85_15_split/conf_no_aug_cvt-13_HAM10k_validation_384.jpg")

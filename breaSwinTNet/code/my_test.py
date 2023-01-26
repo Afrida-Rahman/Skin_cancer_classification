@@ -17,8 +17,8 @@ print("GPU: " + str(tf.config.list_physical_devices('GPU')))
 print("Available gpu: " + str(tf.test.is_gpu_available()))
 
 data_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/customized_data/"
-result_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/result/"
-model_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/model/"
+result_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/result_85_15_split/"
+model_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/model_85_15_split/"
 
 lr = .01
 epoch = 20

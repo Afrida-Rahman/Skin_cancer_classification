@@ -13,11 +13,11 @@ from sklearn.metrics import confusion_matrix, classification_report, precision_s
 
 os.chdir("..//..")
 
-model_folder = 'HuggingFace/model/vit/VIT_L_AUG_BALANCED_P32_R384_E20/20_2023-01-14-07-41-51/'
-m_path = model_folder + "model/"
+model_folder = 'HuggingFace/model_85_15_split/vit/VIT_L_AUG_BALANCED_P32_R384_E20/20_2023-01-14-07-41-51/'
+m_path = model_folder + "model_85_15_split/"
 f_path = model_folder + "feature_extractor/"
 t_path = model_folder + "trainer/"
-result_path = "HuggingFace/result/vit/"
+result_path = "HuggingFace/result_85_15_split/vit/"
 test_data_path = "aug_data/balanced/train_test_val/test/"
 config_path = t_path + 'config.json'
 cfg_file = open(config_path)

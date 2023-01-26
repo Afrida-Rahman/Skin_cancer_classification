@@ -19,8 +19,8 @@ print("GPU: " + str(tf.config.list_physical_devices('GPU')))
 print("Available gpu: " + str(tf.test.is_gpu_available()))
 
 data_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/customized_data/"
-result_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/result/"
-model_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/model/"
+result_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/result_85_15_split/"
+model_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/model_85_15_split/"
 
 x_train = np.load(data_path+ "x_train.npy")
 y_train = np.load(data_path+ "y_train.npy")
@@ -30,18 +30,18 @@ IMAGE_SIZE = [x_train.shape[1], x_train.shape[1], 3]
 swin_vit = SwinTransformer('swin_'+model_name, include_top=True, pretrained=True)
 
 
-# checkpoint_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/model/small_200e_115sd_0.0001l"
+# checkpoint_path = "/home/afrida/Documents/skin_cancer_classification/breaSwinTNet/model_85_15_split/small_200e_115sd_0.0001l"
 model = tf.keras.Sequential()
 model.add(tf.keras.Input(shape=IMAGE_SIZE))
 # convLayer = tf.keras.layers.Conv2D(7, 3, padding= 'same', activation='relu',input_shape=IMAGE_SIZE) (x_train)
 # print(convLayer.shape)
-# model.add(convLayer)
-# model.add(tf.keras.layers.Conv2D(7, 3, padding= 'same', activation='relu',input_shape=IMAGE_SIZE))
-# model.add(tf.keras.layers.MaxPooling2D())
+# model_85_15_split.add(convLayer)
+# model_85_15_split.add(tf.keras.layers.Conv2D(7, 3, padding= 'same', activation='relu',input_shape=IMAGE_SIZE))
+# model_85_15_split.add(tf.keras.layers.MaxPooling2D())
 model.add(swin_vit)
 model.add(tf.keras.layers.Dense(7, activation='softmax'))
 model.build(IMAGE_SIZE)
-# model = tf.keras.models.load_model(checkpoint_path)
+# model_85_15_split = tf.keras.models.load_model(checkpoint_path)
 model.summary()
 
 model.compile(optimizer=tf.keras.optimizers.Adadelta(learning_rate=lr), loss='sparse_categorical_crossentropy', metrics=['accuracy'])

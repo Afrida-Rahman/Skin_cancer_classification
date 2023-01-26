@@ -7,7 +7,7 @@ import numpy as np
 
 
 train, test, id2label, label2id = VisionDataset.fromImageFolder(
-    "raw_data/train_test_splitted/train/",
+    "raw_data/data_85_15_split/train/",
     test_ratio=0.2,
     balanced=False,
     augmentation=False,
@@ -19,7 +19,7 @@ trainer = VisionClassifierTrainer(
     model_name="Train_With_Aug",
     train=train,
     test=test,
-    output_dir="../model/",
+    output_dir="../model_85_15_split/",
     max_epochs=50,
     batch_size=32,  # On RTX 2080 Ti
     lr=2e-5,
@@ -45,8 +45,8 @@ print(hyp)
 # test_img = np.load("raw_data/test_img_72x72.npy")
 # test_label = np.load("raw_data/test_label_72x72.npy")
 # print("start testing")
-# trainer.testing("raw_data/train_test_splitted/val/nv/ISIC_0024309.jpg", "0")
-# trainer.test("raw_data/train_test_splitted/val/")
+# trainer.testing("raw_data/data_85_15_split/val/nv/ISIC_0024309.jpg", "0")
+# trainer.test("raw_data/data_85_15_split/val/")
 
 import pandas as pd
 import seaborn as sn
