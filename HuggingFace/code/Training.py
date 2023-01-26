@@ -104,7 +104,7 @@ class Training:
 
         print("Start Saving Model....")
         self.trainer.save_model(self.model_path + "/trainer/")
-        self.model.save_pretrained(self.model_path + "/model/")
+        self.model.save_pretrained(self.model_path + "/model_85_15_split/")
         self.feature_extractor.save_pretrained(self.model_path + "/feature_extractor/")
         print("Model saved at: \033[93m" + self.model_path + "\033[0m")
 
@@ -173,11 +173,6 @@ class Training:
 
             # Get predictions from the softmax layer
             preds = outputs.logits.softmax(1).argmax(1).tolist()
-            proba = outputs.logits.softmax(0).argmax(0).tolist()
-            print(f"logit:: {outputs.logits}")
-            print(f"softmax 0:: {outputs.logits.softmax(0)}")
-            print(f"softmax 1:: {outputs.logits.softmax(1)}")
-            print(f"softmax 0 argmax 0:: {outputs.logits.softmax(0).argmax(0).tolist()}")
             all_preds.extend(preds)
 
             # Get hypothesis

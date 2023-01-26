@@ -239,7 +239,7 @@ def create_vit_classifier(vanilla=False):
     features = mlp(representation, hidden_units=MLP_HEAD_UNITS, dropout_rate=0.5)
     # Classify outputs.
     logits = layers.Dense(NUM_CLASSES)(features)
-    # Create the Keras model.
+    # Create the Keras model_85_15_split.
     model = keras.Model(inputs=inputs, outputs=logits)
     return model
 

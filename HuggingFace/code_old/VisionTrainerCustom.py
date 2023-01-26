@@ -77,7 +77,7 @@ class VisionTrainerCustom:
         # Get the classifier collator
         self.collator = ImageClassificationCollator(self.feature_extractor)
 
-        # Get the model output path
+        # Get the model_85_15_split output path
         self.output_path = self.__getOutputPath()
         self.logs_path = self.output_path
 
@@ -114,12 +114,12 @@ class VisionTrainerCustom:
         print("Trainer builded!")
 
         """
-        ⚙️ Train the given model on the dataset
+        ⚙️ Train the given model_85_15_split on the dataset
         """
         print("Start Training!")
         self.trainer.train()
         self.trainer.save_model(self.output_path + "/trainer/")
-        self.model.save_pretrained(self.output_path + "/model/")
+        self.model.save_pretrained(self.output_path + "/model_85_15_split/")
         self.feature_extractor.save_pretrained(self.output_path + "/feature_extractor/")
         print("Model saved at: \033[93m" + self.output_path + "\033[0m")
 
@@ -136,7 +136,7 @@ class VisionTrainerCustom:
         self.logs_file = open(self.logs_path + "/logs.txt", "a")
 
     """
-    📍 Get the path of the output model
+    📍 Get the path of the output model_85_15_split
     """
 
     def __getOutputPath(self):

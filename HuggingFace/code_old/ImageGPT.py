@@ -14,14 +14,14 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/train/",
+    "../../raw_data/data_70_20_10_split/train/",
     test_ratio=0,
     balanced=False,
     augmentation=False,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/val/",
+    "../../raw_data/data_70_20_10_split/val/",
     test_ratio=0,
     balanced=False,
     augmentation=False,
@@ -30,7 +30,7 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 # Initializing a ViT vit-base-patch16-224 style configuration
 configuration = ImageGPTConfig()
 
-# Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
+# Initializing a model_85_15_split (with random weights) from the vit-base-patch16-224 style configuration
 model = ImageGPTModel(configuration)
 epoch = 10
 model_name = 'ImageGPT_Small'
@@ -40,7 +40,7 @@ trainer = VisionClassifierTrainer(
     model_name="ImageGPT_224_Train_Without_Aug"+str(epoch)+"e",
     train=train,
     test=test,
-    output_dir="../model/",
+    output_dir="../model/model_85_15_split/",
     max_epochs=epoch,
     batch_size=1,  # On RTX 2080 Ti
     lr=2e-5,
@@ -55,7 +55,7 @@ trainer = VisionClassifierTrainer(
 
 ref, hyp = trainer.evaluate_f1_score()
 
-result_path = "../result/"
+result_path = "../result/result_85_15_split/"
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
 cm = confusion_matrix(y_true=ref, y_pred=hyp)

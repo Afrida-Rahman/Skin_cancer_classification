@@ -9,7 +9,7 @@ from transformers import Swinv2Config, Swinv2Model
 
 absolute_path = "/home/afrida/Documents/skin_cancer_classification/"
 train, test, id2label, label2id = VisionDataset.fromImageFolder(
-    absolute_path + "raw_data/train_test_splitted/train/",
+    absolute_path + "raw_data/data_85_15_split/train/",
     test_ratio=0.2,
     balanced=False,
     augmentation=False,
@@ -48,7 +48,7 @@ trainer = VisionClassifierTrainer(
     model_name="Train_Without_Aug_checking",
     train=train,
     test=test,
-    output_dir=absolute_path + "/HuggingFace/model/",
+    output_dir=absolute_path + "/HuggingFace/model_85_15_split/",
     max_epochs=5,
     batch_size=32,  # On RTX 2080 Ti
     lr=2e-5,

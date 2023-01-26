@@ -12,7 +12,7 @@ os.chdir("..")
 
 def split_train_test_val():
     splitfolders.ratio(input="raw_data/class_separated_data",
-                       output="raw_data/train_test_splitted",
+                       output="raw_data/data_85_15_split",
                        seed=100, ratio=(.85, .15), group_prefix=None)
 
 
@@ -75,7 +75,7 @@ def convert_label_to_int(label_list):
 split_train_test_val()
 
 ### TRAIN #####
-# train_path = "../raw_data/train_test_splitted/train/"
+# train_path = "../raw_data/data_85_15_split/train/"
 #
 # label_list = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 # train_img, train_label = [], []
@@ -103,7 +103,7 @@ split_train_test_val()
 # print("train saved successfully.")
 #
 # #### TEST #####
-# test_path = "../raw_data/train_test_splitted/val/"
+# test_path = "../raw_data/data_85_15_split/val/"
 #
 # label_list = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 # test_img, test_label = [], []

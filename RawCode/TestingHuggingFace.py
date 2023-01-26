@@ -5,22 +5,22 @@
 # import numpy as np
 #
 # train, test, id2label, label2id = VisionDataset.fromImageFolder(
-#     "raw_data/train_test_splitted/val/",
+#     "raw_data/data_85_15_split/val/",
 #     test_ratio=0.2,
 #     balanced=False,
 #     augmentation=False,
 # )
 # print(test)
 #
-# feature_extractor = ViTFeatureExtractor.from_pretrained("model/TRAIN_WITH_AUG/50_2022-11-23-17-41-32/feature_extractor/")
-# model = ViTForImageClassification.from_pretrained("model/TRAIN_WITH_AUG/50_2022-11-23-17-41-32/model/")
+# feature_extractor = ViTFeatureExtractor.from_pretrained("model_85_15_split/TRAIN_WITH_AUG/50_2022-11-23-17-41-32/feature_extractor/")
+# model_85_15_split = ViTForImageClassification.from_pretrained("model_85_15_split/TRAIN_WITH_AUG/50_2022-11-23-17-41-32/model_85_15_split/")
 #
 # inputs = feature_extractor(test, return_tensors="pt")
-# logits = model(**inputs).logits
+# logits = model_85_15_split(**inputs).logits
 
-# # model predicts one of the 1000 ImageNet classes
+# # model_85_15_split predicts one of the 1000 ImageNet classes
 # predicted_label = int(tf.math.argmax(logits, axis=-1))
-# print(model.config.id2label[predicted_label])
+# print(model_85_15_split.config.id2label[predicted_label])
 
 import os.path
 from glob import glob
@@ -32,12 +32,12 @@ from transformers import ViTFeatureExtractor, ViTForImageClassification
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
 import matplotlib.pyplot as plt
 
-path = "../HuggingFace/model/TRAIN_WITHOUT_AUG/50_2022-11-25-18-59-19/"
+path = "../HuggingFace/model/model_85_15_split/TRAIN_WITHOUT_AUG/50_2022-11-25-18-59-19/"
 
 classifier = VisionClassifierInference(
     feature_extractor=ViTFeatureExtractor.from_pretrained(
         "feature_extractor"),
-    model=ViTForImageClassification.from_pretrained("model"),
+    model=ViTForImageClassification.from_pretrained("model_85_15_split"),
 )
 
 
@@ -73,7 +73,7 @@ def separate_class_label(file_path, ctg):
 
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
-path = "../raw_data/train_test_splitted/val/"
+path = "../raw_data/data_85_15_split/val/"
 a, b = [], []
 for i in ctg:
     y_true, y_pred = separate_class_label(path, i)

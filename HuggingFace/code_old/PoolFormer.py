@@ -13,14 +13,14 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/train/",
+    "../../raw_data/data_70_20_10_split/train/",
     test_ratio=0,
     balanced=True,
     augmentation=True,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/val/",
+    "../../raw_data/data_70_20_10_split/val/",
     test_ratio=0,
     balanced=True,
     augmentation=True,
@@ -50,7 +50,7 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 
 configuration = PoolFormerConfig()
 
-# Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
+# Initializing a model_85_15_split (with random weights) from the vit-base-patch16-224 style configuration
 model = PoolFormerModel(configuration)
 configuration = model.config
 huggingface_model= 'sail/poolformer_m48'
@@ -61,7 +61,7 @@ trainer = VisionClassifierTrainer(
     model_name=f"{model_name}_{model_variant}_e{epoch}",
     train=train,
     test=test,
-    output_dir="../model/pool_former/",
+    output_dir="../model/model_85_15_split/pool_former/",
     max_epochs=epoch,
     batch_size=4,  # On RTX 2080 Ti
     lr=1e-5,
@@ -84,7 +84,7 @@ print("\nHyp: ")
 print(hyp)
 
 
-result_path = "../result/"
+result_path = "../result/result_85_15_split/"
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
 
 cm = confusion_matrix(y_true=ref, y_pred=hyp)

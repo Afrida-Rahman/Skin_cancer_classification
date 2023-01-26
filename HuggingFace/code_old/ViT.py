@@ -12,14 +12,14 @@ from transformers import ViTFeatureExtractor, ViTForImageClassification
 
 os.chdir("..//..")
 # train, _, id2label, label2id = VisionDataset.fromImageFolder(
-#     "../../raw_data/train_test_valid_splitted/train/",
+#     "../../raw_data/data_70_20_10_split/train/",
 #     test_ratio=0,
 #     balanced=False,
 #     augmentation=False,
 # )
 #
 # test, _, _, _ = VisionDataset.fromImageFolder(
-#     "../../raw_data/train_test_valid_splitted/val/",
+#     "../../raw_data/data_70_20_10_split/val/",
 #     test_ratio=0,
 #     balanced=False,
 #     augmentation=False,
@@ -42,16 +42,16 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 epoch = 20
 model_name = 'ViT_L_aug_balanced'
 
-# for pretrained model only
-model_path = "HuggingFace/model/vit/"
-result_path = "HuggingFace/result/vit/"
+# for pretrained model_85_15_split only
+model_path = "HuggingFace/model_85_15_split/vit/"
+result_path = "HuggingFace/result_85_15_split/vit/"
 pretrained_model = 'google/vit-large-patch32-384'
 patch = 32
 resolution = 384
 
 if model_name.__contains__("custom"):
-    result_path = "HuggingFace/result/vit_custom/"
-    model_path = "HuggingFace/model/vit_custom/"
+    result_path = "HuggingFace/result_85_15_split/vit_custom/"
+    model_path = "HuggingFace/model_85_15_split/vit_custom/"
     configuration = ViTConfig(hidden_size=1024, num_hidden_layers=24, intermediate_size=4096, num_attention_heads=16,
                               patch_size=9, image_size=72, id2label=id2label, label2id=label2id,
                               num_labels=len(label2id))

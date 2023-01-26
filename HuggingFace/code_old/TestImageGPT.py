@@ -10,12 +10,12 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/IMAGEGPT_224_10E/10_2023-01-10-12-44-27/'
-m_path = model_folder + "model/"
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model_85_15_split/IMAGEGPT_224_10E/10_2023-01-10-12-44-27/'
+m_path = model_folder + "model_85_15_split/"
 f_path = model_folder + "feature_extractor/"
 
-result_path = "../result/"
-test_data_path = "../../raw_data/train_test_valid_splitted/test/"
+result_path = "../result/result_85_15_split/"
+test_data_path = "../../raw_data/data_70_20_10_split/test/"
 
 epoch = 10
 model_name = 'ImageGPT_Small'

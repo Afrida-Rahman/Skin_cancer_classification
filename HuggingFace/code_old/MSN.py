@@ -9,14 +9,14 @@ import numpy as np
 from transformers import ViTMSNConfig, ViTMSNModel
 
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/train/",
+    "../../raw_data/data_70_20_10_split/train/",
     test_ratio=0,
     balanced=False,
     augmentation=False,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "../../raw_data/train_test_valid_splitted/val/",
+    "../../raw_data/data_70_20_10_split/val/",
     test_ratio=0,
     balanced=False,
     augmentation=False,
@@ -27,7 +27,7 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 #                           patch_size=32, image_size=384)
 configuration = ViTMSNConfig()
 
-# Initializing a model (with random weights) from the vit-base-patch16-224 style configuration
+# Initializing a model_85_15_split (with random weights) from the vit-base-patch16-224 style configuration
 model = ViTMSNModel(configuration)
 huggingface_model= 'facebook/vit-msn-large'
 epoch = 10
@@ -37,7 +37,7 @@ trainer = VisionClassifierTrainer(
     model_name=f"{model_name}_{resolution}_e{epoch}",
     train=train,
     test=test,
-    output_dir="../model/",
+    output_dir="../model/model_85_15_split/",
     max_epochs=epoch,
     batch_size=8,  # On RTX 2080 Ti
     lr=1e-5,
@@ -63,8 +63,8 @@ print(hyp)
 # test_img = np.load("raw_data/test_img_72x72.npy")
 # test_label = np.load("raw_data/test_label_72x72.npy")
 # print("start testing")
-# trainer.testing("raw_data/train_test_splitted/val/nv/ISIC_0024309.jpg", "0")
-# trainer.test("raw_data/train_test_splitted/val/")
+# trainer.testing("raw_data/data_85_15_split/val/nv/ISIC_0024309.jpg", "0")
+# trainer.test("raw_data/data_85_15_split/val/")
 
 import pandas as pd
 import seaborn as sn

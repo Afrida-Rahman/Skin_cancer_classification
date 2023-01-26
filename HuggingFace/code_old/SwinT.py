@@ -12,14 +12,14 @@ from transformers import SwinForImageClassification, Swinv2ForImageClassificatio
 
 os.chdir("..//..")
 # train, _, id2label, label2id = VisionDataset.fromImageFolder(
-#     "../../raw_data/train_test_valid_splitted/train/",
+#     "../../raw_data/data_70_20_10_split/train/",
 #     test_ratio=0,
 #     balanced=False,
 #     augmentation=False,
 # )
 #
 # test, _, _, _ = VisionDataset.fromImageFolder(
-#     "../../raw_data/train_test_valid_splitted/val/",
+#     "../../raw_data/data_70_20_10_split/val/",
 #     test_ratio=0,
 #     balanced=False,
 #     augmentation=False,
@@ -42,17 +42,17 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 epoch = 5
 model_name = 'Swin_L_aug_balanced'
 
-# for pretrained model only
-model_path = "HuggingFace/model/swin/"
-result_path = "HuggingFace/result/swin/"
+# for pretrained model_85_15_split only
+model_path = "HuggingFace/model_85_15_split/swin/"
+result_path = "HuggingFace/result_85_15_split/swin/"
 pretrained_model = 'microsoft/swin-large-patch4-window12-384-in22k'
 patch = 4
 resolution = 384
 window = 12
 
 if model_name.__contains__("custom"):
-    result_path = "HuggingFace/result/swin/"
-    model_path = "HuggingFace/model/swin/"
+    result_path = "HuggingFace/result_85_15_split/swin/"
+    model_path = "HuggingFace/model_85_15_split/swin/"
     configuration = Swinv2Config(
             image_size=192,
             patch_size=16,

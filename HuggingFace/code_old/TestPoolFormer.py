@@ -10,12 +10,12 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
     accuracy_score
 
-model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model/POOLFORMER_M48_E20/20_2023-01-09-20-29-25/'
-m_path = model_folder + "model/"
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/HuggingFace/model_85_15_split/POOLFORMER_M48_E20/20_2023-01-09-20-29-25/'
+m_path = model_folder + "model_85_15_split/"
 f_path = model_folder + "feature_extractor/"
 
-result_path = "../result/"
-test_data_path = "../../raw_data/train_test_valid_splitted/test/"
+result_path = "../result/result_85_15_split/"
+test_data_path = "../../raw_data/data_70_20_10_split/test/"
 
 epoch = 20
 model_name = 'PoolFormer'

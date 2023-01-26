@@ -122,7 +122,7 @@ def build_vit(input_shape, embed_dim=EMBED_DIM, num_heads=NUM_HEADS,
     pooling_layer = GlobalAveragePooling1D()(encoder_layer4)
     dense_layer = Dense(FINAL_DENSE, activation='relu')(pooling_layer)
     dropout_layer = Dropout(DROPOUT)(dense_layer)
-    outputs = Dense(n_classes, activation="softmax")(dense_layer)  # Construct the transformer model
+    outputs = Dense(n_classes, activation="softmax")(dense_layer)  # Construct the transformer model_85_15_split
     ViT = Model(inputs=inputs, outputs=outputs)
     ViT.compile(optimizer="adam", loss='categorical_crossentropy',
                 metrics=['accuracy', 'Precision', 'Recall', 'AUC'])

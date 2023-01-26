@@ -17,14 +17,14 @@ from transformers import ConvNextConfig, ConvNextModel
 
 os.chdir("..//..")
 # train, _, id2label, label2id = VisionDataset.fromImageFolder(
-#     "../../raw_data/train_test_valid_splitted/train/",
+#     "../../raw_data/data_70_20_10_split/train/",
 #     test_ratio=0,
 #     balanced=False,
 #     augmentation=False,
 # )
 #
 # test, _, _, _ = VisionDataset.fromImageFolder(
-#     "../../raw_data/train_test_valid_splitted/val/",
+#     "../../raw_data/data_70_20_10_split/val/",
 #     test_ratio=0,
 #     balanced=False,
 #     augmentation=False,
@@ -47,9 +47,9 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 epoch = 7
 model_name = 'ConvNext_XL_aug'
 
-# for pretrained model only
-model_path = "../model/convNext/"
-result_path = "../result/convNext/"
+# for pretrained model_85_15_split only
+model_path = "../model/model_85_15_split/convNext/"
+result_path = "../result/result_85_15_split/convNext/"
 pretrained_model = 'facebook/convnext-xlarge-224-22k-1k'
 patch = 4
 resolution = 224

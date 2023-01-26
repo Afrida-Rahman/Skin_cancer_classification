@@ -2,7 +2,7 @@
 # # Xray source: https://huggingface.co/blog/vision-transformers
 # # https://github.com/qanastek/HugsVision/blob/main/recipes/kvasir_v2/binary_classification/Kvasir_v2_Image_Classifier.ipynb
 # Accuracy= https://stackoverflow.com/questions/39770376/scikit-learn-get-accuracy-scores-for-each-class
-# model link: https://huggingface.co/models?sort=downloads&search=convN
+# model_85_15_split link: https://huggingface.co/models?sort=downloads&search=convN
 import os
 
 from hugsvision.dataio.VisionDataset import VisionDataset
@@ -35,9 +35,9 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 epoch = 20
 model_name = 'ConvNext_L'
 
-# for pretrained model only
-model_path = "HuggingFace/model/raw/convNext/"
-result_path = "HuggingFace/result/raw/convNext/"
+# for pretrained model_85_15_split only
+model_path = "HuggingFace/model_85_15_split/raw/convNext/"
+result_path = "HuggingFace/result_85_15_split/raw/convNext/"
 pretrained_model = 'facebook/convnext-large-224-22k-1k'
 patch = 4
 resolution = 224

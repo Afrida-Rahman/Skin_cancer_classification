@@ -12,10 +12,10 @@ from hugsvision.dataio.VisionDataset import VisionDataset
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = 'HuggingFace/model/aug/convnext/CONVNEXT_L_AUG_B_P4_R224_E3/3_2023-01-16-13-00-55/'
-m_path = model_folder + "model/"
+model_folder = 'HuggingFace/model_85_15_split/aug/convnext/CONVNEXT_L_AUG_B_P4_R224_E3/3_2023-01-16-13-00-55/'
+m_path = model_folder + "model_85_15_split/"
 f_path = model_folder + "feature_extractor/"
-result_path = "HuggingFace/result/aug/convnext/"
+result_path = "HuggingFace/result_85_15_split/aug/convnext/"
 test_data_path = "aug_data/balanced_MVT/train_test_val/val/"
 
 config_path = m_path + 'config.json'

@@ -102,7 +102,7 @@ model.add(tf.keras.layers.Dense(NUM_CLASSES, activation='softmax'))
 
 model.build(IMAGE_SIZE)
 
-#model.build(IMAGE_SIZE)
+#model_85_15_split.build(IMAGE_SIZE)
 model.summary()
 
 model.compile(optimizer = tf.keras.optimizers.Adadelta(learning_rate = 0.1), loss = 'sparse_categorical_crossentropy', metrics = ['accuracy'])
