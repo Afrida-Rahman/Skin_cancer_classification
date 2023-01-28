@@ -11,12 +11,14 @@ from sklearn import metrics
 from hugsvision.dataio.ImageClassificationCollator import ImageClassificationCollator
 from hugsvision.dataio.VisionDataset import VisionDataset
 from matplotlib import pyplot as plt
-from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report, \
+    roc_auc_score
 from transformers import Trainer
 from transformers.training_args import TrainingArguments
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 import numpy as np
+
 
 class Training:
 
@@ -116,13 +118,14 @@ class Training:
         res_dict = {'accuracy': metrics.accuracy_score(y_true=labels, y_pred=predictions)}
         return res_dict
 
-    def compute_eval_metrics(self, y_true, y_pred, result_path, ext):
+    def compute_eval_metrics(self, y_true, y_pred, y_pred_proba, result_path, ext):
         ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
         cm = confusion_matrix(y_true=y_true, y_pred=y_pred)
         acc = accuracy_score(y_true=y_true, y_pred=y_pred)
         pre = precision_score(y_true=y_true, y_pred=y_pred, average="macro")
         recall = recall_score(y_true=y_true, y_pred=y_pred, average="macro")
         classification_r = pd.DataFrame(classification_report(y_true, y_pred, target_names=ctg, output_dict=True))
+        roc_auc = roc_auc_score(y_true, y_pred_proba, average="macro", multi_class='ovr')
 
         df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
         plt.figure(figsize=(10, 7))
@@ -130,7 +133,7 @@ class Training:
         plt.savefig(result_path + "conf.jpg")
 
         print(classification_r)
-        df = pd.DataFrame([pre, acc, recall], index=['pre', 'acc', 'recall'])
+        df = pd.DataFrame([pre, acc, recall, roc_auc], index=['pre', 'acc', 'recall', 'roc_auc'])
 
         file_name = f"{ext}_{self.model_name}_p{self.patch}_r{self.resolution}_e{self.epoch}.xlsx"
         with pd.ExcelWriter(result_path + file_name) as writer:
@@ -141,7 +144,7 @@ class Training:
         os.remove(result_path + "conf.jpg")
 
     def evaluate_f1_score(self):
-        all_target, all_preds = self.evaluate()
+        all_target, all_preds, all_pred_proba = self.evaluate()
 
         table = metrics.classification_report(
             all_target,
@@ -159,26 +162,28 @@ class Training:
 
         print("Logs saved at: \033[93m" + self.model_path + "\033[0m")
 
-        return all_target, all_preds
+        return all_target, all_preds, all_pred_proba
 
     def evaluate(self):
         all_preds = []
         all_target = []
-
+        all_pred_proba = []
         # For each image
         for image, label in tqdm(self.test):
-            # Compute
+            all_target.append(label)
+
             inputs = self.feature_extractor(images=image, return_tensors="pt").to(self.device)
             outputs = self.model(**inputs)
 
-            # Get predictions from the softmax layer
             preds = outputs.logits.softmax(1).argmax(1).tolist()
             all_preds.extend(preds)
 
-            # Get hypothesis
-            all_target.append(label)
+            softmax = torch.nn.Softmax(dim=0)
+            pred_soft = softmax(outputs[0][0])
+            probabilities = pred_soft.tolist()
+            all_pred_proba.append(probabilities)
 
-        return all_target, all_preds
+        return all_target, all_preds, all_pred_proba
 
     def __openLogs(self):
         self.logs_file = open(self.model_path + "/logs.txt", "a")

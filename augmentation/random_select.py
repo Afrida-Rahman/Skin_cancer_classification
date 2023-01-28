@@ -5,14 +5,14 @@ import random
 
 
 os.chdir("..")
-file_path = "aug_data/imbalanced/class_separated_data/"
-result_path = "aug_data/balanced/class_separated_data/"
+file_path = "data/aug_data/data_85_15_split/imbalanced/train/"
+result_path = "data/aug_data/data_85_15_split/balanced/train/"
 
-ctg = ['akiec','bcc','vasc']
-selection_num = 1099
+ctg = ['akiec','bcc']
 
 
 def select(ctg):
+    selection_num = 1000 - len(glob(result_path + ctg + '/*'))
     files = glob(file_path + ctg + '/*')
     random.shuffle(files)
     # print(f"{ctg} = {files[:2]}")
@@ -22,12 +22,12 @@ def select(ctg):
             j += 1
             image = Image.open(i)
             print(i)
-            image.save(result_path + ctg + '/' + i.split('/')[4])
+            image.save(result_path + ctg + '/' + i.split('/')[6])
         else:
             break
 
 
 for i in ctg:
-    os.makedirs(result_path + i)
+    # os.makedirs(result_path + i)
     select(i)
     print(f"{i} selection is done!")
