@@ -106,7 +106,7 @@ class Training:
 
         print("Start Saving Model....")
         self.trainer.save_model(self.model_path + "/trainer/")
-        self.model.save_pretrained(self.model_path + "/model_85_15_split/")
+        self.model.save_pretrained(self.model_path + "/model/")
         self.feature_extractor.save_pretrained(self.model_path + "/feature_extractor/")
         print("Model saved at: \033[93m" + self.model_path + "\033[0m")
 
