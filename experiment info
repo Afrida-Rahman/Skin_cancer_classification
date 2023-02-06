@@ -1,0 +1,29 @@
+split: train=70(aug-imageio), val=20(aug-imageio), test=10(aug-imageio)
+result: val=95.311, test=94.845
+
+split: train=70(aug-imageio), val=20(aug-imageio), test=10(after removing -> aug-imageio)
+result: val=95.311, test=93.213
+
+split: train=70(aug-imageio), val=20(aug-imageio), test=10(raw)
+result: val=95.558, test=88.15
+
+split: train=70(aug-imageio), val=20(aug-imageio), test=10(raw) (all originals exists)
+result: val=94.18, test=90.34
+
+Balanced num: 1500
+split: train=70(aug-imageio), val=20(aug-imageio), test=10(raw) (all originals exists)
+result: val=95.4955, test=89.45
+----------------------------------------------------------------------------------------------------
+split: train=90(aug-pytorch), val=10(raw)
+result: val=88.something
+
+split: train=70(aug-pytorch), val=20(aug-pytorch), test=10(raw)
+result: val=95.54, test=87.26
+______________________________________________________________________________________________________
+Contrast in pytorch-aug has been removed:1099
+split: train=70(aug-pytorch), val=20(aug-pytorch), test=10(raw) (all originals exists)
+result: val=94.00, test=88.95
+
+Balanced num: 1500
+split: train=70(aug-pytorch), val=20(aug-pytorch), test=10(raw) (all originals exists)
+result: val=95.21, test=89.45

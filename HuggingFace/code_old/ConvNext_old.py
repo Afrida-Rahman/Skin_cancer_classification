@@ -4,16 +4,16 @@
 #
 import os
 
-from hugsvision.dataio.VisionDataset import VisionDataset
-from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
-from transformers import ConvNextForImageClassification , \
-    ConvNextFeatureExtractor
+import PIL
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
-import matplotlib.pyplot as plt
+from hugsvision.dataio.VisionDataset import VisionDataset
+from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
-import PIL
 from transformers import ConvNextConfig, ConvNextModel
+from transformers import ConvNextForImageClassification, \
+    ConvNextFeatureExtractor
 
 os.chdir("..//..")
 # train, _, id2label, label2id = VisionDataset.fromImageFolder(
@@ -48,8 +48,8 @@ epoch = 7
 model_name = 'ConvNext_XL_aug'
 
 # for pretrained model_85_15_split only
-model_path = "../model/model_85_15_split/convNext/"
-result_path = "../result/result_85_15_split/convNext/"
+model_path = "../model/model_85_15_split/convnext/"
+result_path = "../result/result_85_15_split/convnext/"
 pretrained_model = 'facebook/convnext-xlarge-224-22k-1k'
 patch = 4
 resolution = 224
@@ -73,10 +73,10 @@ if model_name.__contains__("custom"):
         batch_size=8,  # On RTX 2080 Ti
         lr=1e-4,
         fp16=False,
-        eval_metric= "accuracy",
+        eval_metric="accuracy",
         model=ConvNextForImageClassification(config=configuration),
         feature_extractor=ConvNextFeatureExtractor(do_resize=True, size=72, do_normalize=True,
-                                              resample=PIL.Image.Resampling.NEAREST)
+                                                   resample=PIL.Image.Resampling.NEAREST)
     )
 else:
     print("pretrained running ....")
@@ -90,11 +90,11 @@ else:
         lr=1e-4,
         fp16=False,
         model=ConvNextForImageClassification.from_pretrained(pretrained_model,
-                                            num_labels=len(label2id),
-                                            label2id=label2id,
-                                            id2label=id2label,
-                                            ignore_mismatched_sizes=True
-                                            ),
+                                                             num_labels=len(label2id),
+                                                             label2id=label2id,
+                                                             id2label=id2label,
+                                                             ignore_mismatched_sizes=True
+                                                             ),
         feature_extractor=ConvNextFeatureExtractor.from_pretrained(pretrained_model)
     )
 # trainer.training_args.load_best_model_at_end = True

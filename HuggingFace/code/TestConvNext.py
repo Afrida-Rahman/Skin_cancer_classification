@@ -1,30 +1,31 @@
 import os
 
-import torch
-from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification, ConvNextConfig
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score, \
-    accuracy_score, roc_curve, roc_auc_score, auc
-from tqdm import tqdm
+import torch
 from hugsvision.dataio.VisionDataset import VisionDataset
+from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, accuracy_score, \
+    roc_auc_score
+from tqdm import tqdm
+from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification, ConvNextConfig
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = 'HuggingFace/model/model_85_15_split/aug/convnext/CONVNEXT_L_EACC_224R_20E_8B/20_2023-01-26-23-42-16/'
-m_path = model_folder + "model_85_15_split/"
+d_type = "70_20_10"  # "85_15"
+model_folder = 'HuggingFace/model/model_70_20_10_split/aug/convnext/old_aug_imageio/CONVNEXT_L_AUG_B_P4_R224_E3/3_2023-01-16-13-00-55/'
+m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-result_path = "HuggingFace/result/result_85_15_split/aug/convnext/"
-test_data_path = "data/raw_data/data_85_15_split/val/"
-ext='val'
+result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/"
+test_data_path = f"data/raw_data/data_{d_type}_split/val/"
+ext = 'test'
 config_path = m_path + 'config.json'
 # cfg_file = open(config_path)
 # config = json.load(cfg_file)
 config = ConvNextConfig.from_json_file(config_path)
 print(config)
-epoch = 20
-model_name = 'ConvNext_L_eacc'
+epoch = 5
+model_name = 'ConvNext_L_eloss'
 patch = config.patch_size
 resolution = config.image_size
 
@@ -35,8 +36,8 @@ test, _, id2label, label2id = VisionDataset.fromImageFolder(
     augmentation=False,
 )
 
-feature_extractor = ConvNextFeatureExtractor.from_pretrained(f_path)
-model = ConvNextForImageClassification.from_pretrained(m_path, config=config)
+feature_extractor = ConvNextFeatureExtractor(do_normalize=True).from_pretrained(f_path)
+model = ConvNextForImageClassification.from_pretrained(m_path)  # , config=config
 resolution = resolution
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']

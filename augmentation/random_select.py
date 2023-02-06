@@ -1,18 +1,23 @@
 import os
+from distutils.dir_util import copy_tree
 from glob import glob
-from PIL import Image
-import random
 
+from PIL import Image
+from numpy import random
 
 os.chdir("..")
-file_path = "data/aug_data/data_85_15_split/imbalanced/train/"
-result_path = "data/aug_data/data_85_15_split/balanced/train/"
+d_type = "70_20_10"  # "85_15"
+file_path = f"data/aug_data/data_{d_type}_split/imbalanced/train/"
+result_path = f"data/aug_data/data_{d_type}_split/balanced/train/"
+raw_data_path = f"data/raw_data/data_{d_type}_split/train/"
 
-ctg = ['akiec','bcc']
+ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'vasc']
+
+copy_tree(raw_data_path, result_path)
 
 
 def select(ctg):
-    selection_num = 1000 - len(glob(result_path + ctg + '/*'))
+    selection_num = 1500 - len(glob(result_path + ctg + '/*'))
     files = glob(file_path + ctg + '/*')
     random.shuffle(files)
     # print(f"{ctg} = {files[:2]}")
@@ -21,13 +26,14 @@ def select(ctg):
         if j < selection_num:
             j += 1
             image = Image.open(i)
-            print(i)
+            # print(i)
             image.save(result_path + ctg + '/' + i.split('/')[6])
         else:
             break
 
 
 for i in ctg:
-    # os.makedirs(result_path + i)
+    if not os.path.exists(result_path + i):
+        os.makedirs(result_path + i)
     select(i)
     print(f"{i} selection is done!")

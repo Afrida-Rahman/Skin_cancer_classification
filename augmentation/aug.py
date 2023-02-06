@@ -1,10 +1,9 @@
 import os
+from glob import glob
 
 import imageio.v3 as iio
 import imgaug.augmenters as iaa
-from glob import glob
 from PIL import Image
-from torchvision.transforms import ColorJitter
 
 os.chdir("..")
 
@@ -12,6 +11,11 @@ os.chdir("..")
 def augmentation(filepath, aug_path):
     input_img = iio.imread(filepath)
     img = filepath.split('/')[5].split('.')[0]
+
+    # save original file
+
+    # input_img_array = Image.fromarray(input_img)
+    # input_img_array.save(aug_path + img + '.jpg')
 
     input_hf = Image.fromarray(iaa.Fliplr(p=0.2).augment_image(input_img))
     input_hf.save(aug_path + img + '_hf.jpg')
@@ -30,11 +34,11 @@ def augmentation(filepath, aug_path):
     input_contrast.save(aug_path + img + '_gc.jpg')
 
     input_bright = Image.fromarray(iaa.AddToBrightness().augment_image(input_img))
-    input_bright.save(aug_path+ img + '_br.jpg')
+    input_bright.save(aug_path + img + '_br.jpg')
 
     input_bc = iaa.GammaContrast().augment_image(input_img)
     input_bc = Image.fromarray(iaa.AddToBrightness().augment_image(input_bc))
-    input_bc.save(aug_path+ img + '_bc.jpg')
+    input_bc.save(aug_path + img + '_bc.jpg')
 
     # crop1 = iaa.Crop(percent=(0.1, 0.3))
     # input_crop1 = crop1.augment_image(input_img)
@@ -51,13 +55,15 @@ def augmentation(filepath, aug_path):
     # jitter_img.save(aug_path + img + '_jitter.jpg')
 
 
-file_path = 'data/raw_data/data_85_15_split/train/'
-aug_path = 'data/aug_data/data_85_15_split/imbalanced/train/'
+d_type = "70_20_10"  # "85_15"
+file_path = f'data/raw_data/data_{d_type}_split/train/'
+aug_path = f'data/aug_data/data_{d_type}_split/imbalanced/train/'
 
-ctg = ['akiec', 'bcc', 'df', 'vasc']
+ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'vasc']
 
 for i in ctg:
-    os.makedirs(aug_path + i)
+    if not os.path.exists(aug_path + i):
+        os.makedirs(aug_path + i)
 
 for i in ctg:
     files = glob(file_path + i + '/*')

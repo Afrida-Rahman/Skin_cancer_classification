@@ -7,8 +7,7 @@ breaSwinTNet/model/
 breaSwinTNet/checkpoint/
 
 ## HuggingFace
-HuggingFace/model/model_85_15_split/
-HuggingFace/model/model_70_20_10_split/
+HuggingFace/model/
 
 ## combined_dataset
 combined_dataset/data/

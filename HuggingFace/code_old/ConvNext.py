@@ -5,14 +5,15 @@
 # model_85_15_split link: https://huggingface.co/models?sort=downloads&search=convN
 import os
 
-from hugsvision.dataio.VisionDataset import VisionDataset
-from transformers import ConvNextForImageClassification, ConvNextFeatureExtractor
+import PIL
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
-import matplotlib.pyplot as plt
+from hugsvision.dataio.VisionDataset import VisionDataset
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
-import PIL
 from transformers import ConvNextConfig, ConvNextModel
+from transformers import ConvNextForImageClassification, ConvNextFeatureExtractor
+
 # from HuggingFace.code.VisionTrainerCustom import VisionTrainerCustom
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -36,8 +37,8 @@ epoch = 20
 model_name = 'ConvNext_L'
 
 # for pretrained model_85_15_split only
-model_path = "HuggingFace/model_85_15_split/raw/convNext/"
-result_path = "HuggingFace/result_85_15_split/raw/convNext/"
+model_path = "HuggingFace/model_85_15_split/raw/convnext/"
+result_path = "HuggingFace/result_85_15_split/raw/convnext/"
 pretrained_model = 'facebook/convnext-large-224-22k-1k'
 patch = 4
 resolution = 224

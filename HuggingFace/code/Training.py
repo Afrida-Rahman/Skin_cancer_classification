@@ -25,8 +25,8 @@ class Training:
     def __init__(self, train="", test="", id2label={}, label2id={}, model_name="", model_path="", epoch=0, batch=8,
                  model="",
                  feature_extractor="", config="", resolution=224, pretrained_model="", patch=0, lr=1e-4, fp16=True,
-                 eval_metric="accuracy", is_best_model=True, test_ratio=0, balanced=False, augmentation=False,
-                 save_total_limit=2, weight_decay=0.01, save_steps=10000, evaluation_strategy='epoch',
+                 eval_metric="accuracy", is_best_model=True, balanced=False, augmentation=False,
+                 save_total_limit=1, weight_decay=0.01, save_steps=10000, evaluation_strategy='epoch',
                  save_strategy='steps', classification_report_digits=4):
 
         self.train = train
@@ -47,7 +47,6 @@ class Training:
         self.fp16 = fp16
         self.eval_metric = eval_metric
         self.is_best_model = is_best_model
-        self.test_ratio = test_ratio
         self.balanced = balanced
         self.augmentation = augmentation
         self.save_total_limit = save_total_limit
@@ -57,10 +56,10 @@ class Training:
         self.save_strategy = save_strategy
         self.classification_report_digits = classification_report_digits
 
-    def read_image(self, path):
+    def read_image(self, path, test_ratio):
         data, _, id2label, label2id = VisionDataset.fromImageFolder(
             path,
-            test_ratio=self.test_ratio,
+            test_ratio=test_ratio,
             balanced=self.balanced,
             augmentation=self.augmentation,
         )
