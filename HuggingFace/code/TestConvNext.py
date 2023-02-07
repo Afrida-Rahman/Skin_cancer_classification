@@ -13,10 +13,10 @@ from transformers import ConvNextFeatureExtractor, ConvNextForImageClassificatio
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
 d_type = "70_20_10"  # "85_15"
-model_folder = 'HuggingFace/model/model_70_20_10_split/aug/convnext/old_aug_imageio/CONVNEXT_L_AUG_B_P4_R224_E3/3_2023-01-16-13-00-55/'
+model_folder = 'HuggingFace/model/model_70_20_10_split/aug/convnext/trial/CONVNEXT_L_ELOSS_224R_5E_8B/5_2023-02-06-18-46-16/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/"
+result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/trial/"
 test_data_path = f"data/raw_data/data_{d_type}_split/val/"
 ext = 'test'
 config_path = m_path + 'config.json'

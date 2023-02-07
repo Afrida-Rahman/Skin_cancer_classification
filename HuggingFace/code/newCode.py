@@ -19,7 +19,7 @@ d_type = "70_20_10"  # "85_15"
 train_data_path = f"data/aug_data/data_{d_type}_split/balanced/train/"
 
 test_data_path = f"data/raw_data/data_{d_type}_split/val/"
-model_path = f"HuggingFace/model/model_{d_type}_split/aug/convnext/"
+model_path = f"HuggingFace/model/model_{d_type}_split/aug/convnext/trial/"
 result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/"
 
 pretrained_model = 'facebook/convnext-large-224-22k-1k'

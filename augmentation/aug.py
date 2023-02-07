@@ -17,17 +17,17 @@ def augmentation(filepath, aug_path):
     # input_img_array = Image.fromarray(input_img)
     # input_img_array.save(aug_path + img + '.jpg')
 
-    input_hf = Image.fromarray(iaa.Fliplr(p=0.2).augment_image(input_img))
+    input_hf = Image.fromarray(iaa.Fliplr(p=1).augment_image(input_img))
     input_hf.save(aug_path + img + '_hf.jpg')
 
-    input_vf = Image.fromarray(iaa.Flipud(p=0.2).augment_image(input_img))
+    input_vf = Image.fromarray(iaa.Flipud(p=1).augment_image(input_img))
     input_vf.save(aug_path + img + '_vf.jpg')
 
     input_n_rot = Image.fromarray(
-        iaa.Affine(rotate=-20, translate_percent=0.2, fit_output=True).augment_image(input_img))
+        iaa.Affine(rotate=-10, fit_output=True).augment_image(input_img))
     input_n_rot.save(aug_path + img + '_nr.jpg')
 
-    input_p_rot = Image.fromarray(iaa.Affine(rotate=20, fit_output=True).augment_image(input_img))
+    input_p_rot = Image.fromarray(iaa.Affine(rotate=10, fit_output=True).augment_image(input_img))
     input_p_rot.save(aug_path + img + '_pr.jpg')
 
     input_contrast = Image.fromarray(iaa.GammaContrast(gamma=(.3, 3.2)).augment_image(input_img))
@@ -59,7 +59,7 @@ d_type = "70_20_10"  # "85_15"
 file_path = f'data/raw_data/data_{d_type}_split/train/'
 aug_path = f'data/aug_data/data_{d_type}_split/imbalanced/train/'
 
-ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'vasc']
+ctg = ['akiec', 'bcc', 'df', 'vasc']
 
 for i in ctg:
     if not os.path.exists(aug_path + i):
