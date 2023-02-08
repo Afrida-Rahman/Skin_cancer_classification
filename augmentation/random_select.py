@@ -1,23 +1,23 @@
 import os
-from distutils.dir_util import copy_tree
 from glob import glob
 
 from PIL import Image
 from numpy import random
 
 os.chdir("..")
-d_type = "70_20_10"  # "85_15"
+d_type = "85_15"  # "70_20_10"  #
 file_path = f"data/aug_data/data_{d_type}_split/imbalanced/train/"
 result_path = f"data/aug_data/data_{d_type}_split/balanced/train/"
 raw_data_path = f"data/raw_data/data_{d_type}_split/train/"
 
-ctg = ['akiec', 'bcc', 'df', 'vasc']
+ctg = ['akiec', 'bcc']  # ['akiec', 'bcc', 'df', 'vasc']
 
-copy_tree(raw_data_path, result_path)
+
+# copy_tree(raw_data_path, result_path)
 
 
 def select(ctg):
-    selection_num = 1099 - len(glob(result_path + ctg + '/*'))
+    selection_num = 1000  # - len(glob(result_path + ctg + '/*'))
     files = glob(file_path + ctg + '/*')
     random.shuffle(files)
     # print(f"{ctg} = {files[:2]}")

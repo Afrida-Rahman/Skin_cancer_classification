@@ -15,28 +15,28 @@ from Training import Training
 os.chdir("..//..")
 
 epoch = 5
-d_type = "70_20_10"  # "85_15"
+d_type = "85_15"  # "70_20_10"
 train_data_path = f"data/aug_data/data_{d_type}_split/balanced/train/"
 
-# test_data_path = f"data/raw_data/data_{d_type}_split/val/"
-model_path = f"HuggingFace/model/model_{d_type}_split/aug/convnext/trial/balanced/"
-result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/trial/balanced/"
+test_data_path = f"data/raw_data/data_{d_type}_split/val/"
+model_path = f"HuggingFace/model/model_{d_type}_split/aug/balanced/convnext/"
+result_path = f"HuggingFace/result/result_{d_type}_split/aug/balanced/convnext/"
 
-pretrained_model = 'facebook/convnext-large-224-22k-1k'
+pretrained_model = "google/vit-large-patch16-224-in21k"  # 'facebook/convnext-large-224-22k-1k'
 patch = 4
 resolution = 224
-batch = 8
+batch = 4
 model = ConvNextModel(ConvNextConfig())
 configuration = model.config
 model_name = f'ConvNext_L_eloss_{resolution}r_{epoch}e_{batch}b'
 
-train, test, id2label, label2id = Training().read_image(path=train_data_path, test_ratio=0.2)
-# test, _, _, _ = Training().read_image(path=test_data_path, test_ratio=0)
+train, _, id2label, label2id = Training().read_image(path=train_data_path, test_ratio=0)
+test, _, _, _ = Training().read_image(path=test_data_path, test_ratio=0)
 print("Train test obtained.")
 
 model = ConvNextForImageClassification.from_pretrained(pretrained_model, num_labels=len(label2id), label2id=label2id,
                                                        id2label=id2label, ignore_mismatched_sizes=True)
-feature_extractor = ConvNextFeatureExtractor(do_normalize=True).from_pretrained(pretrained_model)
+feature_extractor = ConvNextFeatureExtractor(do_normalize=True, do_rescale=True).from_pretrained(pretrained_model)
 
 training = Training(train=train, test=test, model_name=model_name, model_path=model_path, epoch=epoch, batch=batch,
                     model=model, feature_extractor=feature_extractor, eval_metric="eval_loss", is_best_model=True,
