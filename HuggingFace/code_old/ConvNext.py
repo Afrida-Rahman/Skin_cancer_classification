@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
 from hugsvision.dataio.VisionDataset import VisionDataset
+from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report
 from transformers import ConvNextConfig, ConvNextModel
 from transformers import ConvNextForImageClassification, ConvNextFeatureExtractor
@@ -19,26 +20,28 @@ from transformers import ConvNextForImageClassification, ConvNextFeatureExtracto
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
 
+epoch = 5
+d_type = "85_15"  # "70_20_10"
+train_data_path = f"data/aug_data/data_{d_type}_split/balanced/train/"
+test_data_path = f"data/raw_data/data_{d_type}_split/val/"
+model_path = f"HuggingFace/model/model_{d_type}_split/aug/balanced/convnext/"
+result_path = f"HuggingFace/result/result_{d_type}_split/aug/balanced/convnext/"
+
 train, _, id2label, label2id = VisionDataset.fromImageFolder(
-    "raw_data/train_test_val/train/",
+    train_data_path,
     test_ratio=0,
     balanced=False,
     augmentation=False,
 )
 
 test, _, _, _ = VisionDataset.fromImageFolder(
-    "raw_data/train_test_val/val/",
+    test_data_path,
     test_ratio=0,
     balanced=False,
     augmentation=False,
 )
 
-epoch = 20
 model_name = 'ConvNext_L'
-
-# for pretrained model_85_15_split only
-model_path = "HuggingFace/model_85_15_split/raw/convnext/"
-result_path = "HuggingFace/result_85_15_split/raw/convnext/"
 pretrained_model = 'facebook/convnext-large-224-22k-1k'
 patch = 4
 resolution = 224
@@ -86,7 +89,7 @@ else:
                                                              ),
         feature_extractor=ConvNextFeatureExtractor.from_pretrained(pretrained_model),
         classification_report_digits=4,
-        eval_metric="Accuracy"
+        eval_metric="loss"
 
     )
 ref, hyp = trainer.evaluate_f1_score()
@@ -121,14 +124,14 @@ os.remove(result_path + "conf.jpg")
 
 ## Sanity Check
 
-print("Start testing .....")
-print()
-ind_test, _, _, _ = VisionDataset.fromImageFolder(
-    "raw_data/train_test_val/test/",
-    test_ratio=0,
-    balanced=False,
-    augmentation=False,
-)
-test_ref, test_hyp = trainer.evaluate(dataset=ind_test)
-classification_r = pd.DataFrame(classification_report(test_ref, test_hyp, target_names=ctg, output_dict=True))
-print(classification_r)
+# print("Start testing .....")
+# print()
+# ind_test, _, _, _ = VisionDataset.fromImageFolder(
+#     "raw_data/train_test_val/test/",
+#     test_ratio=0,
+#     balanced=False,
+#     augmentation=False,
+# )
+# test_ref, test_hyp = trainer.evaluate(dataset=ind_test)
+# classification_r = pd.DataFrame(classification_report(test_ref, test_hyp, target_names=ctg, output_dict=True))
+# print(classification_r)

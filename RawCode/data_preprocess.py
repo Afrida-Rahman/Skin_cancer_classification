@@ -7,14 +7,14 @@ from PIL import Image
 
 os.chdir("..")
 d_type = "70_20_10"  # "85_15"
-input_file_path = "data/raw_data/class_separated_data/"
-output_file_path = f"data/raw_data/data_{d_type}_split/"
+input_file_path = "data/fr_data/balanced_data/"  # "data/raw_data/class_separated_data/"
+output_file_path = "data/fr_data/data_70_20_10_split/"  # f"data/raw_data/data_{d_type}_split/"
 
 
 def split_train_test_val():
     splitfolders.ratio(input=input_file_path,
                        output=output_file_path,
-                       seed=100, ratio=(.9, .1), group_prefix=None)
+                       seed=201, ratio=(.7, .2, .1), group_prefix=None)
 
 
 def resize_img(file_path, resolution):
@@ -23,8 +23,8 @@ def resize_img(file_path, resolution):
         print(i)
         image = Image.open(i)
         image = image.resize((resolution, resolution))
-        os.remove(file_path + '/' + i.split('/')[5])
-        image.save(file_path + '/' + i.split('/')[5])
+        os.remove(file_path + '/' + i.split('/')[4])
+        image.save(file_path + '/' + i.split('/')[4])
 
 
 def separate_class_label(file_path, ctg):
@@ -82,15 +82,15 @@ def convert_label_to_int(label_list):
     return np.array(a)
 
 
-###  SPLIT ###
-split_train_test_val()
-
 # RESIZE #
 categories = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 for i in categories:
     print(i)
-    resize_img(file_path=output_file_path + 'train/' + i, resolution=224)
-    resize_img(file_path=output_file_path + 'val/' + i, resolution=224)
+    resize_img(file_path=input_file_path + i, resolution=224)
+    # resize_img(file_path=output_file_path + 'val/' + i, resolution=224)
+
+###  SPLIT ###
+split_train_test_val()
 
 ### TRAIN #####
 # train_path = "../raw_data/data_85_15_split/train/"
