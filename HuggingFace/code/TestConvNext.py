@@ -1,9 +1,11 @@
 import os
+from glob import glob
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
 import torch
+from PIL import Image
 from hugsvision.dataio.VisionDataset import VisionDataset
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, accuracy_score, \
     roc_auc_score
@@ -13,28 +15,31 @@ from transformers import ConvNextFeatureExtractor, ConvNextForImageClassificatio
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
 d_type = "70_20_10"  # "85_15"
-model_folder = 'HuggingFace/model/model_70_20_10_split/aug/convnext/trial/balanced/CONVNEXT_L_ELOSS_224R_5E_8B/5_2023-02-07-15-13-26/'
+model_folder = 'HuggingFace/model/model_70_20_10_split/aug/convnext/XL_EACC_384R_3E_8B/3_2023-03-05-06-43-11/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/trial/balanced/"
-test_data_path = f"data/raw_data/data_{d_type}_split/val/"
+# result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/"
+result_path = "HuggingFace/result/ISIC_2018/aug/convnext/"
+# test_data_path = f"data/aug_data/data_{d_type}_split/384/test/"
+test_data_path = "data/raw_data/ISIC_2018/384"
 ext = 'test'
 config_path = m_path + 'config.json'
 # cfg_file = open(config_path)
 # config = json.load(cfg_file)
 config = ConvNextConfig.from_json_file(config_path)
-print(config)
-epoch = 5
-model_name = 'ConvNext_L_eloss'
+epoch = 3
+model_name = 'XL_eacc'
 patch = config.patch_size
 resolution = config.image_size
 
-test, _, id2label, label2id = VisionDataset.fromImageFolder(
-    test_data_path,
-    test_ratio=0,
-    balanced=False,
-    augmentation=False,
-)
+# test, _, _, _ = VisionDataset.fromImageFolder(
+#     test_data_path,
+#     test_ratio=0,
+#     balanced=False,
+#     augmentation=False,
+# )
+
+test = glob(test_data_path + '/*')
 
 feature_extractor = ConvNextFeatureExtractor(do_normalize=True).from_pretrained(f_path)
 model = ConvNextForImageClassification.from_pretrained(m_path)  # , config=config
@@ -65,8 +70,40 @@ def evaluate(dataset):
 
     return all_target, all_preds, all_pred_proba
 
+def evaluate_isic(dataset):
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    all_preds = []
+    label_file = pd.read_csv("data/raw_data/ISIC_2018/labels.csv")
+    image_str = label_file['image_id']
+    image_label = label_file['dx']
+    ctg = {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
+    image_label_dict = {}
+    for i in range(len(image_str)):
+        image_label_dict[image_str[i] + ".jpg"] = ctg[image_label[i]]
 
-y_true, y_pred, y_pred_proba = evaluate(test)
+    print(image_label_dict)
+    all_target = []
+    all_pred_proba = []
+    # For each image
+    for file in tqdm(dataset):
+        file_str = file.split('/')[4]
+        all_target.append(image_label_dict[file_str])
+        image = Image.open(file)
+        inputs = feature_extractor(images=image, return_tensors="pt")
+        outputs = model(**inputs)
+
+        preds = outputs.logits.softmax(1).argmax(1).tolist()
+        all_preds.extend(preds)
+
+        softmax = torch.nn.Softmax(dim=0)
+        pred_soft = softmax(outputs[0][0])
+        probabilities = pred_soft.tolist()
+        all_pred_proba.append(probabilities)
+
+    return all_target, all_preds, all_pred_proba
+
+# y_true, y_pred, y_pred_proba = evaluate(test)
+y_true, y_pred, y_pred_proba = evaluate_isic(test)
 
 cm = confusion_matrix(y_true, y_pred)
 acc = accuracy_score(y_true, y_pred)
