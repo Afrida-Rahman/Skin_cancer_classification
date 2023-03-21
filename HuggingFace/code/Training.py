@@ -231,7 +231,7 @@ class Training:
 
         path = os.path.join(
             self.model_path,
-            self.model_name.upper() + "/" + str(self.epoch) + "_" + datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
+            self.model_name.lower() + "/" + str(self.epoch) + "_" + datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
         )
         if not os.path.isdir(path):
             os.makedirs(path)
