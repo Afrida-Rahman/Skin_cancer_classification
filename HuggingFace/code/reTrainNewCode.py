@@ -1,9 +1,3 @@
-# source: https://medium.com/@yanis.labrak/how-to-train-a-custom-vision-transformer-vit-image-classifier-to-help-endoscopists-in-under-5-min-2e7e4110a353
-# Xray source: https://huggingface.co/blog/vision-transformers
-# https://github.com/qanastek/HugsVision/blob/main/recipes/kvasir_v2/binary_classification/Kvasir_v2_Image_Classifier.ipynb
-# Accuracy= https://stackoverflow.com/questions/39770376/scikit-learn-get-accuracy-scores-for-each-class
-# model_85_15_split link: https://huggingface.co/models?sort=downloads&search=convN
-
 import os
 
 from transformers import ConvNextForImageClassification, ConvNextImageProcessor
