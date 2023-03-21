@@ -1,24 +1,34 @@
 import os
+from datetime import datetime
 
-import PIL
+import numpy as np
 import pandas as pd
 import seaborn as sn
 import torch
 import torchmetrics
-from tqdm import tqdm
-from datetime import datetime
-from sklearn import metrics
 from hugsvision.dataio.ImageClassificationCollator import ImageClassificationCollator
 from hugsvision.dataio.VisionDataset import VisionDataset
 from matplotlib import pyplot as plt
+from sklearn import metrics
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report, \
     roc_auc_score
+from tqdm import tqdm
 from transformers import Trainer
 from transformers.training_args import TrainingArguments
-import tensorflow as tf
-from tensorflow.python.client import device_lib
-import numpy as np
 
+
+# class CustomCallback(TrainerCallback):
+#
+#     def __init__(self, trainer) -> None:
+#         super().__init__()
+#         self._trainer = trainer
+#
+#     def on_epoch_end(self, args, state, control, **kwargs):
+#         if control.should_evaluate:
+#             control_copy = deepcopy(control)
+#             self._trainer.evaluate(eval_dataset=self._trainer.train_dataset, metric_key_prefix="train")
+#             return control_copy
+#
 
 class Training:
 
@@ -101,6 +111,7 @@ class Training:
         )
 
         print("Start Training!")
+        # self.trainer.add_callback(CustomCallback(self.trainer))
         self.trainer.train()
 
         print("Start Saving Model....")
@@ -134,7 +145,7 @@ class Training:
         print(classification_r)
         df = pd.DataFrame([pre, acc, recall, roc_auc], index=['pre', 'acc', 'recall', 'roc_auc'])
 
-        file_name = f"{ext}_{self.model_name}_p{self.patch}_r{self.resolution}_e{self.epoch}.xlsx"
+        file_name = f"{ext}_{self.model_name}.xlsx"
         with pd.ExcelWriter(result_path + file_name) as writer:
             df.to_excel(writer, sheet_name='all_metrics')
             classification_r.to_excel(writer, sheet_name='metrics_with_labels')
@@ -143,46 +154,75 @@ class Training:
         os.remove(result_path + "conf.jpg")
 
     def evaluate_f1_score(self):
-        all_target, all_preds, all_pred_proba = self.evaluate()
+        val_target, val_preds, val_pred_proba, train_target, train_preds, train_pred_proba = self.evaluate()
 
-        table = metrics.classification_report(
-            all_target,
-            all_preds,
+        table1 = metrics.classification_report(
+            val_target,
+            val_preds,
             labels=[int(a) for a in list(self.id2label.keys())],
             target_names=list(self.label2id.keys()),
             zero_division=0,
             digits=self.classification_report_digits,
         )
-        print(table)
+        print(table1)
+
+        table2 = metrics.classification_report(
+            train_target,
+            train_preds,
+            labels=[int(a) for a in list(self.id2label.keys())],
+            target_names=list(self.label2id.keys()),
+            zero_division=0,
+            digits=self.classification_report_digits,
+        )
+        print(table2)
 
         self.__openLogs()
-        self.logs_file.write(table + "\n")
+        self.logs_file.write(table1 + "\n")
         self.logs_file.close()
 
         print("Logs saved at: \033[93m" + self.model_path + "\033[0m")
 
-        return all_target, all_preds, all_pred_proba
+        return val_target, val_preds, val_pred_proba, train_target, train_preds, train_pred_proba
 
     def evaluate(self):
-        all_preds = []
-        all_target = []
-        all_pred_proba = []
+        train_preds = []
+        train_target = []
+        train_pred_proba = []
+
+        val_preds = []
+        val_target = []
+        val_pred_proba = []
+
         # For each image
         for image, label in tqdm(self.test):
-            all_target.append(label)
+            val_target.append(label)
 
             inputs = self.feature_extractor(images=image, return_tensors="pt").to(self.device)
             outputs = self.model(**inputs)
 
             preds = outputs.logits.softmax(1).argmax(1).tolist()
-            all_preds.extend(preds)
+            val_preds.extend(preds)
 
             softmax = torch.nn.Softmax(dim=0)
             pred_soft = softmax(outputs[0][0])
             probabilities = pred_soft.tolist()
-            all_pred_proba.append(probabilities)
+            val_pred_proba.append(probabilities)
 
-        return all_target, all_preds, all_pred_proba
+        for image, label in tqdm(self.train):
+            train_target.append(label)
+
+            inputs = self.feature_extractor(images=image, return_tensors="pt").to(self.device)
+            outputs = self.model(**inputs)
+
+            preds = outputs.logits.softmax(1).argmax(1).tolist()
+            train_preds.extend(preds)
+
+            softmax = torch.nn.Softmax(dim=0)
+            pred_soft = softmax(outputs[0][0])
+            probabilities = pred_soft.tolist()
+            train_pred_proba.append(probabilities)
+
+        return val_target, val_preds, val_pred_proba, train_target, train_preds, train_pred_proba
 
     def __openLogs(self):
         self.logs_file = open(self.model_path + "/logs.txt", "a")
