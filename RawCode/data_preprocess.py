@@ -7,8 +7,8 @@ from PIL import Image
 
 os.chdir("..")
 d_type = "70_20_10"  # "85_15"
-input_file_path = "data/fr_data/balanced_data/"  # "data/raw_data/class_separated_data/"
-output_file_path = "data/fr_data/data_70_20_10_split/"  # f"data/raw_data/data_{d_type}_split/"
+input_file_path = "data/sensor_data/aug_balanced/"  # "data/raw_data/class_separated_data/"
+output_file_path = "data/sensor_data/70_20_10/224/"  # f"data/raw_data/data_{d_type}_split/"
 
 
 def split_train_test_val():
@@ -20,11 +20,10 @@ def split_train_test_val():
 def resize_img(file_path, resolution):
     folders = glob(file_path + '/*')
     for i in folders:
-        print(i)
         image = Image.open(i)
         image = image.resize((resolution, resolution))
-        os.remove(file_path + '/' + i.split('/')[4])
-        image.save(file_path + '/' + i.split('/')[4])
+        os.remove(file_path + '/' + i.split('/')[-1])
+        image.save(file_path + '/' + i.split('/')[-1])
 
 
 def separate_class_label(file_path, ctg):
@@ -82,15 +81,16 @@ def convert_label_to_int(label_list):
     return np.array(a)
 
 
+###  SPLIT ###
+# split_train_test_val()
+
 # RESIZE #
 categories = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 for i in categories:
-    print(i)
-    resize_img(file_path=input_file_path + i, resolution=224)
-    # resize_img(file_path=output_file_path + 'val/' + i, resolution=224)
-
-###  SPLIT ###
-split_train_test_val()
+    resize_img(file_path=output_file_path + 'train/' + i, resolution=224)
+    resize_img(file_path=output_file_path + 'val/' + i, resolution=224)
+    resize_img(file_path=output_file_path + 'test/' + i, resolution=224)
+    print(f"{i} is done")
 
 ### TRAIN #####
 # train_path = "../raw_data/data_85_15_split/train/"
