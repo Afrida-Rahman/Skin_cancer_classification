@@ -9,6 +9,7 @@ import torchmetrics
 from hugsvision.dataio.ImageClassificationCollator import ImageClassificationCollator
 from hugsvision.dataio.VisionDataset import VisionDataset
 from matplotlib import pyplot as plt
+from imblearn.metrics import sensitivity_score, specificity_score
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report, \
     roc_auc_score
@@ -136,6 +137,8 @@ class Training:
         recall = recall_score(y_true=y_true, y_pred=y_pred, average="macro")
         classification_r = pd.DataFrame(classification_report(y_true, y_pred, target_names=ctg, output_dict=True))
         roc_auc = roc_auc_score(y_true, y_pred_proba, average="macro", multi_class='ovr')
+        spe = specificity_score(y_true=y_true, y_pred=y_pred, average="macro")
+        sns = sensitivity_score(y_true=y_true, y_pred=y_pred, average="macro")
 
         df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
         plt.figure(figsize=(10, 7))
@@ -143,7 +146,7 @@ class Training:
         plt.savefig(result_path + "conf.jpg")
 
         print(classification_r)
-        df = pd.DataFrame([pre, acc, recall, roc_auc], index=['pre', 'acc', 'recall', 'roc_auc'])
+        df = pd.DataFrame([pre, acc, recall, roc_auc, spe, sns], index=['pre', 'acc', 'recall', 'roc_auc', 'sp','sn'])
 
         file_name = f"{ext}_{self.model_name}.xlsx"
         with pd.ExcelWriter(result_path + file_name) as writer:
