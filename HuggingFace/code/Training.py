@@ -76,7 +76,7 @@ class Training:
         )
         return data, _, id2label, label2id
 
-    def build_trainer(self):
+    def build_trainer(self, resume=False):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.metric = torchmetrics.Accuracy('multiclass', num_classes=len(list(self.label2id.keys())))
         self.collator = ImageClassificationCollator(self.feature_extractor)
@@ -113,7 +113,7 @@ class Training:
 
         print("Start Training!")
         # self.trainer.add_callback(CustomCallback(self.trainer))
-        self.trainer.train()
+        self.trainer.train(resume_from_checkpoint=resume)
 
         print("Start Saving Model....")
         self.trainer.save_model(self.model_path + "/trainer/")
