@@ -13,7 +13,7 @@ os.chdir("..")
 def augmentation(filepath, aug_path):
     input_img = iio.imread(filepath)
     input_img = Image.fromarray(input_img)
-    img = filepath.split('/')[4].split('.')[0]
+    img = filepath.split('/')[-1].split('.')[0]
 
     # save original file
 
@@ -41,28 +41,27 @@ def augmentation(filepath, aug_path):
     input_grayscale = RandomGrayscale(0.5).forward(input_img)
     input_grayscale.save(aug_path + img + '_grayscale.jpg')
 
-    input_crop = RandomCrop(size=224, pad_if_needed=True).forward(input_img)
+    input_crop = RandomCrop(size=384, pad_if_needed=True).forward(input_img)
     input_crop.save(aug_path + img + '_crp.jpg')
 
-    input_invert = RandomInvert(0.5).forward(input_img)
-    input_invert.save(aug_path + img + '_invert.jpg')
+    # input_invert = RandomInvert(0.5).forward(input_img)
+    # input_invert.save(aug_path + img + '_invert.jpg')
 
     # input_posterize = RandomPosterize(bits=7, p=0.5).forward(input_img)
     # input_posterize.save(aug_path + img + '_post.jpg')
 
-    input_equalize = RandomEqualize(0.5).forward(input_img)
-    input_equalize.save(aug_path + img + '_eq.jpg')
+    # input_equalize = RandomEqualize(0.5).forward(input_img)
+    # input_equalize.save(aug_path + img + '_eq.jpg')
 
     # jitter_img = Image.fromarray(input_img)
     # jitter_img = ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2)).forward(jitter_img)
     # jitter_img.save(aug_path + img + '_jitter.jpg')
 
 
-d_type = "70_20_10"  # "85_15"
-file_path = f'data/raw_data/class_separated_data/'  # f'data/raw_data/data_{d_type}_split/train/'
-aug_path = f'data/fr_data/class_data/'  # f'data/aug_data/data_{d_type}_split/imbalanced/train/'
+file_path = f'data/raw_data/class_separated_data/'
+aug_path = f'data/sensor_data/pytorch/aug_imbalanced/'
 
-ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'vasc']
+ctg = ['akiec', 'bcc', 'df', 'vasc']
 
 for i in ctg:
     if not os.path.exists(aug_path + i):

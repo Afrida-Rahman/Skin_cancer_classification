@@ -5,8 +5,8 @@ from PIL import Image
 from numpy import random
 
 os.chdir("..")
-file_path = f'data/sensor_data/aug_imbalanced/'
-result_path = f'data/sensor_data/aug_balanced/'
+file_path = f'data/sensor_data/pytorch/aug_imbalanced/'
+result_path = f'data/sensor_data/pytorch/aug_balanced/'
 # raw_data_path = f"data/raw_data/data_{d_type}_split/train/"
 
 ctg = ['akiec', 'bcc', 'df', 'vasc']

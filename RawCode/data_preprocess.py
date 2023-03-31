@@ -6,9 +6,8 @@ import splitfolders
 from PIL import Image
 
 os.chdir("..")
-d_type = "70_20_10"  # "85_15"
-input_file_path = "data/sensor_data/aug_balanced/"  # "data/raw_data/class_separated_data/"
-output_file_path = "data/sensor_data/70_20_10/224/"  # f"data/raw_data/data_{d_type}_split/"
+input_file_path = "data/sensor_data/pytorch/aug_balanced/"
+output_file_path = "data/sensor_data/70_20_10/384_b_pyt/"
 
 
 def split_train_test_val():
@@ -82,14 +81,14 @@ def convert_label_to_int(label_list):
 
 
 ###  SPLIT ###
-# split_train_test_val()
+split_train_test_val()
 
 # RESIZE #
 categories = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 for i in categories:
-    resize_img(file_path=output_file_path + 'train/' + i, resolution=224)
-    resize_img(file_path=output_file_path + 'val/' + i, resolution=224)
-    resize_img(file_path=output_file_path + 'test/' + i, resolution=224)
+    resize_img(file_path=output_file_path + 'train/' + i, resolution=384)
+    resize_img(file_path=output_file_path + 'val/' + i, resolution=384)
+    resize_img(file_path=output_file_path + 'test/' + i, resolution=384)
     print(f"{i} is done")
 
 ### TRAIN #####
