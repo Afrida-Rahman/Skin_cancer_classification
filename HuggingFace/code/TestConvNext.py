@@ -1,5 +1,4 @@
 import os
-from glob import glob
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,14 +13,11 @@ from transformers import ConvNextFeatureExtractor, ConvNextForImageClassificatio
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-d_type = "70_20_10"  # "85_15"
-model_folder = 'HuggingFace/model/model_70_20_10_split/aug/convnext/XL_EACC_384R_3E_8B/3_2023-03-05-06-43-11/'
+model_folder = 'HuggingFace/model/model_70_20_10_split/sensor/convnext_xl_eacc_imb_pyt_384r_3e_8b/3_2023-03-31-05-35-57/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-# result_path = f"HuggingFace/result/result_{d_type}_split/aug/convnext/"
-result_path = "HuggingFace/result/ISIC_2018/aug/convnext/"
-# test_data_path = f"data/aug_data/data_{d_type}_split/384/test/"
-test_data_path = "data/raw_data/ISIC_2018/384"
+result_path = model_folder
+test_data_path = "data/sensor_data/70_20_10/384_imb_pyt/test"
 ext = 'test'
 config_path = m_path + 'config.json'
 # cfg_file = open(config_path)
@@ -32,17 +28,17 @@ model_name = 'XL_eacc'
 patch = config.patch_size
 resolution = config.image_size
 
-# test, _, _, _ = VisionDataset.fromImageFolder(
-#     test_data_path,
-#     test_ratio=0,
-#     balanced=False,
-#     augmentation=False,
-# )
+test, _, _, _ = VisionDataset.fromImageFolder(
+    test_data_path,
+    test_ratio=0,
+    balanced=False,
+    augmentation=False,
+)
 
-test = glob(test_data_path + '/*')
+# test = glob(test_data_path + '/*')
 
 feature_extractor = ConvNextFeatureExtractor(do_normalize=True).from_pretrained(f_path)
-model = ConvNextForImageClassification.from_pretrained(m_path)  # , config=config
+model = ConvNextForImageClassification.from_pretrained(m_path)
 resolution = resolution
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
@@ -69,6 +65,7 @@ def evaluate(dataset):
         all_pred_proba.append(probabilities)
 
     return all_target, all_preds, all_pred_proba
+
 
 def evaluate_isic(dataset):
     # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -102,8 +99,9 @@ def evaluate_isic(dataset):
 
     return all_target, all_preds, all_pred_proba
 
-# y_true, y_pred, y_pred_proba = evaluate(test)
-y_true, y_pred, y_pred_proba = evaluate_isic(test)
+
+y_true, y_pred, y_pred_proba = evaluate(test)
+# y_true, y_pred, y_pred_proba = evaluate_isic(test)
 
 cm = confusion_matrix(y_true, y_pred)
 acc = accuracy_score(y_true, y_pred)

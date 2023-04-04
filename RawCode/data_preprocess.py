@@ -8,6 +8,7 @@ from PIL import Image
 os.chdir("..")
 input_file_path = "data/sensor_data/pytorch/aug_balanced/"
 output_file_path = "data/sensor_data/70_20_10/384_b_pyt/"
+input = "data/raw_data/class_separated_data/"
 
 
 def split_train_test_val():
@@ -20,7 +21,7 @@ def resize_img(file_path, resolution):
     folders = glob(file_path + '/*')
     for i in folders:
         image = Image.open(i)
-        image = image.resize((resolution, resolution))
+        image = image.resize((640, 450))
         os.remove(file_path + '/' + i.split('/')[-1])
         image.save(file_path + '/' + i.split('/')[-1])
 
@@ -81,66 +82,13 @@ def convert_label_to_int(label_list):
 
 
 ###  SPLIT ###
-split_train_test_val()
+# split_train_test_val()
 
 # RESIZE #
 categories = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 for i in categories:
-    resize_img(file_path=output_file_path + 'train/' + i, resolution=384)
-    resize_img(file_path=output_file_path + 'val/' + i, resolution=384)
-    resize_img(file_path=output_file_path + 'test/' + i, resolution=384)
+    # resize_img(file_path=output_file_path + 'train/' + i, resolution=384)
+    # resize_img(file_path=output_file_path + 'val/' + i, resolution=384)
+    # resize_img(file_path=output_file_path + 'test/' + i, resolution=384)
+    resize_img(file_path=input + i, resolution=384)
     print(f"{i} is done")
-
-### TRAIN #####
-# train_path = "../raw_data/data_85_15_split/train/"
-#
-# label_list = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
-# train_img, train_label = [], []
-# for i in label_list:
-#     train_img1, train_label1 = separate_class_label(train_path, i)
-#     print(f"{i} done")
-#     train_img.extend(train_img1)
-#     train_label.extend(train_label1)
-#
-# train_label = np.array(train_label)
-# train_img = np.array(train_img)
-#
-# print(train_img.shape)
-# print(train_label.shape)
-# print(f"x_train: {train_img.shape} - y_train: {train_label.shape}")
-#
-# train_label = convert_label_to_int(train_label)
-# train_Y_ctg= utils.to_categorical(train_label)
-# np.save(arr=train_Y_ctg, file="../random_trial/train_label_ctg_3.npy")
-#
-# print("train conversion is done")
-#
-# np.save(arr=train_img, file="../random_trial/train_img_28x28x3.npy")
-# np.save(arr=train_label, file="random_trial/train_label_28x28x3.npy")
-# print("train saved successfully.")
-#
-# #### TEST #####
-# test_path = "../raw_data/data_85_15_split/val/"
-#
-# label_list = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
-# test_img, test_label = [], []
-# for i in label_list:
-#     train_img1, train_label1 = separate_class_label(test_path, i)
-#     print(f"{i} done")
-#     test_img.extend(train_img1)
-#     test_label.extend(train_label1)
-#
-# test_label = np.array(test_label)
-# test_img = np.array(test_img)
-# print(test_img.shape)
-# print(test_label.shape)
-# print(f"x_test: {test_img.shape} - y_test: {test_label.shape}")
-#
-# test_label = convert_label_to_int(test_label)
-# test_Y_ctg = utils.to_categorical(test_label)
-# np.save(arr=test_Y_ctg, file="../random_trial/test_label_ctg_3.npy")
-# print("test conversion is done")
-#
-# np.save(arr=test_img, file="../random_trial/test_img_28x28x3.npy")
-# np.save(arr=test_label, file="random_trial/test_label_28x28x3.npy")
-# print("test saved successfully.")
