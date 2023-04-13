@@ -124,17 +124,18 @@ class Training:
 
         self.logs_file.close()
 
-    # def compute_metrics(self, eval_pred):
-    #     predictions, labels = eval_pred
-    #     predictions = np.argmax(predictions, axis=1)
-    #     res_dict = {'accuracy': metrics.accuracy_score(y_true=labels, y_pred=predictions)}
-    #     return res_dict
-    def compute_metrics(eval_pred):
-        top_k = 3
+    def compute_metrics(self, eval_pred):
         predictions, labels = eval_pred
-        preds = np.argsort(-predictions)[:, 0:top_k]
-        acc_at_k = sum([l in p for l, p in zip(labels, preds)]) / len(labels)
-        return {'acc_at_k': acc_at_k}
+        predictions = np.argmax(predictions, axis=1)
+        res_dict = {'accuracy': metrics.accuracy_score(y_true=labels, y_pred=predictions)}
+        return res_dict
+
+    # def compute_metrics(eval_pred):
+    #     top_k = 3
+    #     predictions, labels = eval_pred
+    #     preds = np.argsort(-predictions)[:, 0:top_k]
+    #     acc_at_k = sum([l in p for l, p in zip(labels, preds)]) / len(labels)
+    #     return {'acc_at_k': acc_at_k}
 
     def compute_eval_metrics(self, y_true, y_pred, y_pred_proba, result_path, ext):
         ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
