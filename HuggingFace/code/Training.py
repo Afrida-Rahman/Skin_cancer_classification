@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+import numpy
 import numpy as np
 import pandas as pd
 import seaborn as sn
@@ -8,11 +9,11 @@ import torch
 import torchmetrics
 from hugsvision.dataio.ImageClassificationCollator import ImageClassificationCollator
 from hugsvision.dataio.VisionDataset import VisionDataset
-from matplotlib import pyplot as plt
 from imblearn.metrics import sensitivity_score, specificity_score
+from matplotlib import pyplot as plt
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, classification_report, \
-    roc_auc_score
+    roc_auc_score, f1_score, top_k_accuracy_score
 from tqdm import tqdm
 from transformers import Trainer
 from transformers.training_args import TrainingArguments
@@ -123,14 +124,24 @@ class Training:
 
         self.logs_file.close()
 
-    def compute_metrics(self, eval_pred):
+    # def compute_metrics(self, eval_pred):
+    #     predictions, labels = eval_pred
+    #     predictions = np.argmax(predictions, axis=1)
+    #     res_dict = {'accuracy': metrics.accuracy_score(y_true=labels, y_pred=predictions)}
+    #     return res_dict
+    def compute_metrics(eval_pred):
+        top_k = 3
         predictions, labels = eval_pred
-        predictions = np.argmax(predictions, axis=1)
-        res_dict = {'accuracy': metrics.accuracy_score(y_true=labels, y_pred=predictions)}
-        return res_dict
+        preds = np.argsort(-predictions)[:, 0:top_k]
+        acc_at_k = sum([l in p for l, p in zip(labels, preds)]) / len(labels)
+        return {'acc_at_k': acc_at_k}
 
     def compute_eval_metrics(self, y_true, y_pred, y_pred_proba, result_path, ext):
         ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
+        numpy.save(result_path + "y_pred.npy", y_pred)
+        numpy.save(result_path + "y_true.npy", y_true)
+        numpy.save(result_path + "y_pred_proba.npy", y_pred_proba)
+
         cm = confusion_matrix(y_true=y_true, y_pred=y_pred)
         acc = accuracy_score(y_true=y_true, y_pred=y_pred)
         pre = precision_score(y_true=y_true, y_pred=y_pred, average="macro")
@@ -139,6 +150,10 @@ class Training:
         roc_auc = roc_auc_score(y_true, y_pred_proba, average="macro", multi_class='ovr')
         spe = specificity_score(y_true=y_true, y_pred=y_pred, average="macro")
         sns = sensitivity_score(y_true=y_true, y_pred=y_pred, average="macro")
+        f1_s = f1_score(y_true=y_true, y_pred=y_pred, average="macro")
+        top_1_acc = top_k_accuracy_score(y_true=y_true, y_score=y_pred_proba, k=1, normalize=True)
+        top_2_acc = top_k_accuracy_score(y_true=y_true, y_score=y_pred_proba, k=2, normalize=True)
+        top_3_acc = top_k_accuracy_score(y_true=y_true, y_score=y_pred_proba, k=3, normalize=True)
 
         df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
         plt.figure(figsize=(10, 7))
@@ -146,7 +161,9 @@ class Training:
         plt.savefig(result_path + "conf.jpg")
 
         print(classification_r)
-        df = pd.DataFrame([pre, acc, recall, roc_auc, spe, sns], index=['pre', 'acc', 'recall', 'roc_auc', 'sp','sn'])
+        df = pd.DataFrame([pre, acc, recall, roc_auc, spe, sns, f1_s, top_1_acc, top_2_acc, top_3_acc],
+                          index=['pre', 'acc', 'recall', 'roc_auc', 'sp', 'sn', 'f1_score', 'top_1_acc', 'top_2_acc',
+                                 'top_3_acc'])
 
         file_name = f"{ext}_{self.model_name}.xlsx"
         with pd.ExcelWriter(result_path + file_name) as writer:

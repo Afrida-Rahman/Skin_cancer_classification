@@ -17,48 +17,47 @@ def augmentation(filepath, aug_path):
     # save original file
 
     # input_img_array = Image.fromarray(input_img)
-    input_img.save(aug_path + img + '.jpg')
+    input_img.save(aug_path + img + '.png')
 
     input_hf = RandomHorizontalFlip(0.5).forward(input_img)
-    input_hf.save(aug_path + img + '_hf.jpg')
+    input_hf.save(aug_path + img + '_hf.png')
 
     input_vf = RandomVerticalFlip(0.5).forward(input_img)
-    input_vf.save(aug_path + img + '_vf.jpg')
+    input_vf.save(aug_path + img + '_vf.png')
 
     input_rot_n = RandomRotation(degrees=(-20, 0)).forward(input_img)
-    input_rot_n.save(aug_path + img + '_rot_n.jpg')
+    input_rot_n.save(aug_path + img + '_rot_n.png')
 
     input_rot_p = RandomRotation(degrees=(0, 20)).forward(input_img)
-    input_rot_p.save(aug_path + img + '_rot_p.jpg')
+    input_rot_p.save(aug_path + img + '_rot_p.png')
 
     # input_contrast = RandomAutocontrast(0.5).forward(input_img)
-    # input_contrast.save(aug_path + img + '_contrast.jpg')
+    # input_contrast.save(aug_path + img + '_contrast.png')
 
     input_sharpness = RandomAdjustSharpness(sharpness_factor=6, p=0.5).forward(input_img)
-    input_sharpness.save(aug_path + img + '_sharpness.jpg')
+    input_sharpness.save(aug_path + img + '_sharp.png')
 
     # input_grayscale = RandomGrayscale(0.5).forward(input_img)
-    # input_grayscale.save(aug_path + img + '_grayscale.jpg')
+    # input_grayscale.save(aug_path + img + '_grayscale.png')
 
     input_crop = RandomCrop(size=384).forward(input_img)
-    input_crop.save(aug_path + img + '_crp.jpg')
+    input_crop.save(aug_path + img + '_crp.png')
 
     # input_invert = RandomInvert(0.5).forward(input_img)
-    # input_invert.save(aug_path + img + '_invert.jpg')
+    # input_invert.save(aug_path + img + '_invert.png')
 
     # input_posterize = RandomPosterize(bits=7, p=0.5).forward(input_img)
-    # input_posterize.save(aug_path + img + '_post.jpg')
+    # input_posterize.save(aug_path + img + '_post.png')
 
     # input_equalize = RandomEqualize(0.5).forward(input_img)
-    # input_equalize.save(aug_path + img + '_eq.jpg')
+    # input_equalize.save(aug_path + img + '_eq.png')
 
-    jitter_img = Image.fromarray(input_img)
-    jitter_img = ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2)).forward(jitter_img)
-    jitter_img.save(aug_path + img + '_jitter.jpg')
+    jitter_img = ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2)).forward(input_img)
+    jitter_img.save(aug_path + img + '_jitter.png')
 
 
-file_path = f'data/raw_data/class_separated_data/'
-aug_path = f'data/sensor_data/pytorch/aug_imbalanced_s/'
+file_path = f'data/raw_data/hair_removed_class_data/'
+aug_path = f'data/sensor_data/pytorch/hair_removed_aug_imb/'
 
 ctg = ['akiec', 'bcc', 'df', 'vasc']
 

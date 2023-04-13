@@ -1,5 +1,6 @@
 .idea/
 data/
+dataset/
 
 ## breaSwinTNet
 breaSwinTNet/customized_data/
@@ -13,3 +14,5 @@ HuggingFace/model/
 combined_dataset/data/
 combined_dataset/model/
 
+##hair_removal
+hair-removal/

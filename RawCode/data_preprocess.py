@@ -2,26 +2,26 @@ import os
 from glob import glob
 
 import numpy as np
+import pandas as pd
 import splitfolders
 from PIL import Image
 
 os.chdir("..")
-input_file_path = "data/sensor_data/pytorch/aug_balanced/"
-output_file_path = "data/sensor_data/70_20_10/384_b_pyt/"
-input = "data/raw_data/class_separated_data/"
+input_file_path = "data/raw_data/class_separated_data/"
+output_file_path = "data/raw_data/72_8_20/384/"
 
 
-def split_train_test_val():
+def split_train_test_val(ratio):
     splitfolders.ratio(input=input_file_path,
                        output=output_file_path,
-                       seed=201, ratio=(.7, .2, .1), group_prefix=None)
+                       seed=201, ratio=ratio, group_prefix=None)
 
 
 def resize_img(file_path, resolution):
     folders = glob(file_path + '/*')
     for i in folders:
         image = Image.open(i)
-        image = image.resize((640, 450))
+        image = image.resize((resolution, resolution))
         os.remove(file_path + '/' + i.split('/')[-1])
         image.save(file_path + '/' + i.split('/')[-1])
 
@@ -81,14 +81,24 @@ def convert_label_to_int(label_list):
     return np.array(a)
 
 
+def prepare_dataset_labels():
+    df = pd.read_csv("HAM10000_metadata")
+    path = "dataset/HAM10000_images/"
+    images = df["image_id"].tolist()
+    label = df["dx"].tolist()
+    for i in range(len(label)):
+        image = Image.open(path + images[i] + ".jpg")
+        image.save("dataset/" + label[i] + "/" + images[i] + ".jpg")
+        print("dataset/" + label[i] + "/" + images[i])
+
+
 ###  SPLIT ###
-# split_train_test_val()
+split_train_test_val(ratio=(.72, .08, .20))
 
 # RESIZE #
 categories = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 for i in categories:
-    # resize_img(file_path=output_file_path + 'train/' + i, resolution=384)
-    # resize_img(file_path=output_file_path + 'val/' + i, resolution=384)
-    # resize_img(file_path=output_file_path + 'test/' + i, resolution=384)
-    resize_img(file_path=input + i, resolution=384)
+    resize_img(file_path=output_file_path + 'train/' + i, resolution=384)
+    resize_img(file_path=output_file_path + 'val/' + i, resolution=384)
+    resize_img(file_path=output_file_path + 'test/' + i, resolution=384)
     print(f"{i} is done")
