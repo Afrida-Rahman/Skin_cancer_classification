@@ -73,7 +73,7 @@ class Training:
             path,
             test_ratio=test_ratio,
             balanced=self.balanced,
-            augmentation=self.augmentation,
+            augmentation=augmentation,
         )
         return data, _, id2label, label2id
 
