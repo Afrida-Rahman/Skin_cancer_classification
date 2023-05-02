@@ -56,8 +56,8 @@ def augmentation(filepath, aug_path):
     jitter_img.save(aug_path + img + '_jitter.png')
 
 
-file_path = f'data/raw_data/hair_removed_class_data/'
-aug_path = f'data/sensor_data/pytorch/hair_removed_aug_imb/'
+file_path = 'data/raw_data/72_8_20/384/train/'
+aug_path = 'data/aug_data/72_8_20/384/train_imbalanced/'
 
 ctg = ['akiec', 'bcc', 'df', 'vasc']
 

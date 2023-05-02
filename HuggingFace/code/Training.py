@@ -68,7 +68,7 @@ class Training:
         self.save_strategy = save_strategy
         self.classification_report_digits = classification_report_digits
 
-    def read_image(self, path, test_ratio):
+    def read_image(self, path, test_ratio, augmentation=False):
         data, _, id2label, label2id = VisionDataset.fromImageFolder(
             path,
             test_ratio=test_ratio,

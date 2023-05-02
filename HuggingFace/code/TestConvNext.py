@@ -6,24 +6,25 @@ import seaborn as sn
 import torch
 from PIL import Image
 from hugsvision.dataio.VisionDataset import VisionDataset
+from imblearn.metrics import specificity_score, sensitivity_score
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, accuracy_score, \
-    roc_auc_score
+    roc_auc_score, f1_score, top_k_accuracy_score
 from tqdm import tqdm
 from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification, ConvNextConfig
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = 'HuggingFace/model/model_70_20_10_split/sensor/convnext_xl_eacc_imb_pyt_384r_3e_8b/3_2023-03-31-05-35-57/'
+model_folder = '/home/afrida/Downloads/trained_models/convnext_xl_eacc_augtrain_384r_6e_8b/acc_91.49/6_2023-04-26-10-47-39/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-result_path = model_folder
-test_data_path = "data/sensor_data/70_20_10/384_imb_pyt/test"
+result_path = '/home/afrida/Downloads/trained_models/convnext_xl_eacc_augtrain_384r_6e_8b/acc_91.49/'
+test_data_path = "data/raw_data/72_8_20/384/test"
 ext = 'test'
 config_path = m_path + 'config.json'
 # cfg_file = open(config_path)
 # config = json.load(cfg_file)
 config = ConvNextConfig.from_json_file(config_path)
-epoch = 3
+epoch = 6
 model_name = 'XL_eacc'
 patch = config.patch_size
 resolution = config.image_size
@@ -37,7 +38,8 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 
 # test = glob(test_data_path + '/*')
 
-feature_extractor = ConvNextFeatureExtractor(do_normalize=True).from_pretrained(f_path)
+feature_extractor = ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True).from_pretrained(
+    f_path)
 model = ConvNextForImageClassification.from_pretrained(m_path)
 resolution = resolution
 
@@ -108,6 +110,33 @@ acc = accuracy_score(y_true, y_pred)
 pre = precision_score(y_true, y_pred, average="macro")
 recall = recall_score(y_true, y_pred, average="macro")
 roc_auc = roc_auc_score(y_true, y_pred_proba, average="macro", multi_class='ovr')
+spe = specificity_score(y_true=y_true, y_pred=y_pred, average="macro")
+sns = sensitivity_score(y_true=y_true, y_pred=y_pred, average="macro")
+f1_s = f1_score(y_true=y_true, y_pred=y_pred, average="macro")
+top_1_acc = top_k_accuracy_score(y_true=y_true, y_score=y_pred_proba, k=1, normalize=True)
+top_2_acc = top_k_accuracy_score(y_true=y_true, y_score=y_pred_proba, k=2, normalize=True)
+top_3_acc = top_k_accuracy_score(y_true=y_true, y_score=y_pred_proba, k=3, normalize=True)
+classification_r = pd.DataFrame(classification_report(y_true, y_pred, target_names=ctg, output_dict=True))
+
+df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
+plt.figure(figsize=(10, 7))
+sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
+plt.savefig(result_path + "conf.jpg")
+
+print(classification_r)
+
+cm = [pre, acc, recall, roc_auc, spe, sns, f1_s, top_1_acc, top_2_acc, top_3_acc]
+df = pd.DataFrame(cm, index=['pre', 'acc', 'recall', 'roc_auc', 'sp', 'sn', 'f1_score', 'top_1_acc', 'top_2_acc',
+                             'top_3_acc'])
+
+file_name = f"{ext}_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.xlsx"
+with pd.ExcelWriter(result_path + file_name) as writer:
+    df.to_excel(writer, sheet_name='all_metrics')
+    classification_r.to_excel(writer, sheet_name='metrics_with_labels')
+    worksheet = writer.sheets['all_metrics']
+    worksheet.insert_image('E1', result_path + "conf.jpg")
+os.remove(result_path + "conf.jpg")
+
 # fpr, tpr, thresholds = roc_curve(y_true, y_pred_proba, pos_label=2)
 # pr_auc = auc(fpr, tpr)
 # Compute ROC curve and ROC area for each class
@@ -131,22 +160,3 @@ roc_auc = roc_auc_score(y_true, y_pred_proba, average="macro", multi_class='ovr'
 #     plt.title('Receiver operating characteristic example')
 #     plt.legend(loc="lower right")
 #     plt.savefig(result_path + "roc_curve.jpg")
-classification_r = pd.DataFrame(classification_report(y_true, y_pred, target_names=ctg, output_dict=True))
-
-df_cm = pd.DataFrame(cm, columns=ctg, index=ctg)
-plt.figure(figsize=(10, 7))
-sn.heatmap(df_cm, annot=True, annot_kws={"size": 8}, fmt="")
-plt.savefig(result_path + "conf.jpg")
-
-print(classification_r)
-
-cm = [pre, acc, recall, roc_auc]
-df = pd.DataFrame(cm, index=['pre', 'acc', 'recall', 'roc_auc'])
-
-file_name = f"{ext}_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.xlsx"
-with pd.ExcelWriter(result_path + file_name) as writer:
-    df.to_excel(writer, sheet_name='all_metrics')
-    classification_r.to_excel(writer, sheet_name='metrics_with_labels')
-    worksheet = writer.sheets['all_metrics']
-    worksheet.insert_image('E1', result_path + "conf.jpg")
-os.remove(result_path + "conf.jpg")
