@@ -1,21 +1,23 @@
 import os
-from transformers import ConvNextV2ForImageClassification, AutoImageProcessor, ConvNextForImageClassification, \
+
+from transformers import ConvNextForImageClassification, \
     ConvNextFeatureExtractor
+
 from Training import Training
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
 
-epoch = 15
-train_data_path = f"data/sensor_data/70_20_10/384/"
+epoch = 6
+train_data_path = "data/raw_data/72_8_20/384/"
 # test_data_path = f"data/raw_data/data_{d_type}_split/val/"
-model_path = f"HuggingFace/model/model_70_20_10_split/sensor/"
-result_path = f"HuggingFace/result/result_sensor_data/"
+model_path = "model/72_8_20/raw/"
+result_path = "model/72_8_20/raw/"
 
-pretrained_model = "facebook/convnext-large-384"
+pretrained_model = "facebook/convnext-large-384-22k-1k"
 resolution = 384
 batch = 2
-model_name = f'convnext_l_{resolution}r_{epoch}e_{batch}b'
+model_name = f'convnext_l_raw_{resolution}r_{epoch}e_{batch}b'
 
 train, _, id2label, label2id = Training().read_image(path=train_data_path + 'train/', test_ratio=0)
 test, _, _, _ = Training().read_image(path=train_data_path + "val/", test_ratio=0)
@@ -36,6 +38,3 @@ print("prediction ready")
 training.compute_eval_metrics(y_true=y_val_true, y_pred=y_val_pred, y_pred_proba=y_val_pred_proba,
                               result_path=result_path,
                               ext="val")
-training.compute_eval_metrics(y_true=y_train_true, y_pred=y_train_pred, y_pred_proba=y_train_pred_proba,
-                              result_path=result_path,
-                              ext="train")

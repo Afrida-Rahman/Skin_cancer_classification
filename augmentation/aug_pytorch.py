@@ -4,7 +4,7 @@ from glob import glob
 import imageio.v3 as iio
 from PIL import Image
 from torchvision.transforms import RandomHorizontalFlip, \
-    RandomVerticalFlip, RandomAdjustSharpness, RandomRotation, RandomCrop, ColorJitter
+    RandomVerticalFlip, RandomAdjustSharpness, RandomRotation, RandomCrop, ColorJitter, RandomAutocontrast
 
 os.chdir("..")
 
@@ -31,8 +31,8 @@ def augmentation(filepath, aug_path):
     input_rot_p = RandomRotation(degrees=(0, 20)).forward(input_img)
     input_rot_p.save(aug_path + img + '_rot_p.png')
 
-    # input_contrast = RandomAutocontrast(0.5).forward(input_img)
-    # input_contrast.save(aug_path + img + '_contrast.png')
+    input_contrast = RandomAutocontrast(0.5).forward(input_img)
+    input_contrast.save(aug_path + img + '_contrast.png')
 
     input_sharpness = RandomAdjustSharpness(sharpness_factor=6, p=0.5).forward(input_img)
     input_sharpness.save(aug_path + img + '_sharp.png')
@@ -57,7 +57,7 @@ def augmentation(filepath, aug_path):
 
 
 file_path = 'data/raw_data/72_8_20/384/train/'
-aug_path = 'data/aug_data/72_8_20/384/train_imbalanced/'
+aug_path = 'data/aug_data/72_8_20/384/train_imbalanced_add_contrst/'
 
 ctg = ['akiec', 'bcc', 'df', 'vasc']
 

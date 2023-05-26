@@ -10,22 +10,23 @@ from imblearn.metrics import specificity_score, sensitivity_score
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, accuracy_score, \
     roc_auc_score, f1_score, top_k_accuracy_score
 from tqdm import tqdm
-from transformers import ConvNextFeatureExtractor, ConvNextForImageClassification, ConvNextConfig
+from transformers import ConvNextConfig, ViTFeatureExtractor, \
+    ViTForImageClassification
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = '/home/afrida/Downloads/trained_models/convnext_xl_eacc_augtrain_384r_6e_8b/acc_91.49/6_2023-04-26-10-47-39/'
+model_folder = '/home/afrida/Downloads/vit_b_eacc_224r_10e_16b_32p/10_2023-05-24-12-45-55/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-result_path = '/home/afrida/Downloads/trained_models/convnext_xl_eacc_augtrain_384r_6e_8b/acc_91.49/'
-test_data_path = "data/raw_data/72_8_20/384/test"
+result_path = '/home/afrida/Downloads/vit_b_eacc_224r_10e_16b_32p/'
+test_data_path = "data/raw_data/72_8_20/224/test"
 ext = 'test'
 config_path = m_path + 'config.json'
 # cfg_file = open(config_path)
 # config = json.load(cfg_file)
 config = ConvNextConfig.from_json_file(config_path)
-epoch = 6
-model_name = 'XL_eacc'
+epoch = 10
+model_name = 'b_eacc'
 patch = config.patch_size
 resolution = config.image_size
 
@@ -38,9 +39,16 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 
 # test = glob(test_data_path + '/*')
 
-feature_extractor = ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True).from_pretrained(
-    f_path)
-model = ConvNextForImageClassification.from_pretrained(m_path)
+# feature_extractor = ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True).from_pretrained(
+#     f_path)
+# model = ConvNextForImageClassification.from_pretrained(m_path)
+
+# feature_extractor = AutoImageProcessor.from_pretrained(f_path)
+# model = Swinv2ForImageClassification.from_pretrained(m_path)
+
+feature_extractor = ViTFeatureExtractor.from_pretrained(f_path)
+model = ViTForImageClassification.from_pretrained(m_path)
+
 resolution = resolution
 
 ctg = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']

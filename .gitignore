@@ -7,12 +7,11 @@ breaSwinTNet/customized_data/
 breaSwinTNet/model/
 breaSwinTNet/checkpoint/
 
-## HuggingFace
+#model
 HuggingFace/model/
+model/
 
 ## combined_dataset
 combined_dataset/data/
 combined_dataset/model/
 
-##hair_removal
-hair-removal/

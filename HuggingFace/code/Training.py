@@ -114,7 +114,7 @@ class Training:
 
         print("Start Training!")
         # self.trainer.add_callback(CustomCallback(self.trainer))
-        self.trainer.train(resume_from_checkpoint=resume)
+        self.trainer.train(resume_from_checkpoint=False)
 
         print("Start Saving Model....")
         self.trainer.save_model(self.model_path + "/trainer/")

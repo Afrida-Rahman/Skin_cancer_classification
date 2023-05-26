@@ -8,7 +8,7 @@ from PIL import Image
 
 os.chdir("..")
 input_file_path = "data/raw_data/class_separated_data/"
-output_file_path = "data/raw_data/72_8_20/384/"
+output_file_path = "data/raw_data/72_8_20/224/"
 
 
 def split_train_test_val(ratio):
@@ -98,7 +98,7 @@ split_train_test_val(ratio=(.72, .08, .20))
 # RESIZE #
 categories = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 for i in categories:
-    resize_img(file_path=output_file_path + 'train/' + i, resolution=384)
-    resize_img(file_path=output_file_path + 'val/' + i, resolution=384)
-    resize_img(file_path=output_file_path + 'test/' + i, resolution=384)
+    resize_img(file_path=output_file_path + 'train/' + i, resolution=224)
+    resize_img(file_path=output_file_path + 'val/' + i, resolution=224)
+    resize_img(file_path=output_file_path + 'test/' + i, resolution=224)
     print(f"{i} is done")
