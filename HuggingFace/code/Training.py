@@ -162,9 +162,8 @@ class Training:
         plt.savefig(result_path + "conf.jpg")
 
         print(classification_r)
-        df = pd.DataFrame([pre, acc, recall, roc_auc, spe, sns, f1_s, top_1_acc, top_2_acc, top_3_acc],
-                          index=['pre', 'acc', 'recall', 'roc_auc', 'sp', 'sn', 'f1_score', 'top_1_acc', 'top_2_acc',
-                                 'top_3_acc'])
+        df = pd.DataFrame([spe, sns, pre, f1_s, roc_auc, top_1_acc, top_2_acc, top_3_acc],
+                          index=['sp', 'sn', 'pre', 'f1_score', 'roc_auc', 'top_1_acc', 'top_2_acc', 'top_3_acc'])
 
         file_name = f"{ext}_{self.model_name}.xlsx"
         with pd.ExcelWriter(result_path + file_name) as writer:

@@ -57,7 +57,21 @@ def augmentation(filepath, aug_path):
 
 
 file_path = 'data/raw_data/72_8_20/384/train/'
-aug_path = 'data/aug_data/72_8_20/384/train_imbalanced_add_contrst/'
+aug_path = 'data/aug_data/72_8_20/384/train/'
+
+aug_types = ['original image',
+             'horizontal flip',
+             'vertical flip',
+             'random rotation negative',
+             "random rotation positive",
+             "auto constrast",
+             "sharpness",
+             "random crop",
+             "color jitter"]
+file = open(aug_path + 'augmentation_types_imbalanced.txt', 'w')
+for item in aug_types:
+    file.write(item + "\n")
+file.close()
 
 ctg = ['akiec', 'bcc', 'df', 'vasc']
 
