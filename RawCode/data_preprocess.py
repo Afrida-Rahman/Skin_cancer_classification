@@ -7,8 +7,9 @@ import splitfolders
 from PIL import Image
 
 os.chdir("..")
+resolution = 384
 input_file_path = "data/raw_data/class_separated_data/"
-output_file_path = "data/raw_data/72_8_20/224/"
+output_file_path = "data/raw_data/70_20_10/384/"
 
 
 def split_train_test_val(ratio):
@@ -93,12 +94,12 @@ def prepare_dataset_labels():
 
 
 ###  SPLIT ###
-split_train_test_val(ratio=(.72, .08, .20))
+split_train_test_val(ratio=(.70, .20, .10))
 
 # RESIZE #
 categories = ["akiec", "bcc", "bkl", "df", "mel", "vasc", "nv"]
 for i in categories:
-    resize_img(file_path=output_file_path + 'train/' + i, resolution=224)
-    resize_img(file_path=output_file_path + 'val/' + i, resolution=224)
-    resize_img(file_path=output_file_path + 'test/' + i, resolution=224)
+    resize_img(file_path=output_file_path + 'train/' + i, resolution=resolution)
+    resize_img(file_path=output_file_path + 'val/' + i, resolution=resolution)
+    resize_img(file_path=output_file_path + 'test/' + i, resolution=resolution)
     print(f"{i} is done")

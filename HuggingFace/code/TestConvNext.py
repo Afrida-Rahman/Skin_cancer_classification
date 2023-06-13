@@ -10,23 +10,22 @@ from imblearn.metrics import specificity_score, sensitivity_score
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, accuracy_score, \
     roc_auc_score, f1_score, top_k_accuracy_score
 from tqdm import tqdm
-from transformers import ConvNextConfig, ViTFeatureExtractor, \
-    ViTForImageClassification
+from transformers import ConvNextConfig, ConvNextFeatureExtractor, ConvNextForImageClassification
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = '/home/afrida/Downloads/vit_b_eacc_224r_10e_16b_32p/10_2023-05-24-12-45-55/'
+model_folder = '/home/afrida/Downloads/convnext_l_eacc_384r_10e_16b/10_2023-06-07-10-08-06/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-result_path = '/home/afrida/Downloads/vit_b_eacc_224r_10e_16b_32p/'
-test_data_path = "data/raw_data/72_8_20/224/test"
+result_path = '/home/afrida/Downloads/convnext_l_eacc_384r_10e_16b/'
+test_data_path = "data/raw_data/72_8_20/384/test"
 ext = 'test'
 config_path = m_path + 'config.json'
 # cfg_file = open(config_path)
 # config = json.load(cfg_file)
 config = ConvNextConfig.from_json_file(config_path)
 epoch = 10
-model_name = 'b_eacc'
+model_name = 'l_eacc'
 patch = config.patch_size
 resolution = config.image_size
 
@@ -39,15 +38,15 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 
 # test = glob(test_data_path + '/*')
 
-# feature_extractor = ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True).from_pretrained(
-#     f_path)
-# model = ConvNextForImageClassification.from_pretrained(m_path)
+feature_extractor = ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True).from_pretrained(
+    f_path)
+model = ConvNextForImageClassification.from_pretrained(m_path)
 
 # feature_extractor = AutoImageProcessor.from_pretrained(f_path)
-# model = Swinv2ForImageClassification.from_pretrained(m_path)
+# model = SwinV2ForImageClassification.from_pretrained(m_path)
 
-feature_extractor = ViTFeatureExtractor.from_pretrained(f_path)
-model = ViTForImageClassification.from_pretrained(m_path)
+# feature_extractor = ViTFeatureExtractor.from_pretrained(f_path)
+# model = ViTForImageClassification.from_pretrained(m_path)
 
 resolution = resolution
 
@@ -133,9 +132,8 @@ plt.savefig(result_path + "conf.jpg")
 
 print(classification_r)
 
-cm = [pre, acc, recall, roc_auc, spe, sns, f1_s, top_1_acc, top_2_acc, top_3_acc]
-df = pd.DataFrame(cm, index=['pre', 'acc', 'recall', 'roc_auc', 'sp', 'sn', 'f1_score', 'top_1_acc', 'top_2_acc',
-                             'top_3_acc'])
+df = pd.DataFrame([spe, sns, pre, f1_s, roc_auc, top_1_acc, top_2_acc, top_3_acc],
+                  index=['sp', 'sn', 'pre', 'f1_score', 'roc_auc', 'top_1_acc', 'top_2_acc', 'top_3_acc'])
 
 file_name = f"{ext}_conf_{model_name}_p{patch}_r{resolution}_e{epoch}.xlsx"
 with pd.ExcelWriter(result_path + file_name) as writer:
