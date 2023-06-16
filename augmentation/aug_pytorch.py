@@ -4,7 +4,7 @@ from glob import glob
 import imageio.v3 as iio
 from PIL import Image
 from torchvision.transforms import RandomHorizontalFlip, \
-    RandomVerticalFlip, RandomAdjustSharpness, RandomRotation, RandomCrop, ColorJitter, RandomAutocontrast
+    RandomVerticalFlip, RandomAdjustSharpness, RandomRotation, ColorJitter, RandomAutocontrast, CenterCrop
 
 os.chdir("..")
 
@@ -40,7 +40,7 @@ def augmentation(filepath, aug_path):
     # input_grayscale = RandomGrayscale(0.5).forward(input_img)
     # input_grayscale.save(aug_path + img + '_grayscale.png')
 
-    input_crop = RandomCrop(size=384).forward(input_img)
+    input_crop = CenterCrop(size=384).forward(input_img)
     input_crop.save(aug_path + img + '_crp.png')
 
     # input_invert = RandomInvert(0.5).forward(input_img)
@@ -56,8 +56,8 @@ def augmentation(filepath, aug_path):
     jitter_img.save(aug_path + img + '_jitter.png')
 
 
-file_path = 'data/raw_data/72_8_20/384/train/'
-aug_path = 'data/aug_data/72_8_20/384/train/'
+file_path = 'data/raw_data/72_8_20/384/val/'
+aug_path = 'data/aug_data/72_8_20/384/imbalanced/val/'
 
 aug_types = ['original image',
              'horizontal flip',
@@ -66,7 +66,7 @@ aug_types = ['original image',
              "random rotation positive",
              "auto constrast",
              "sharpness",
-             "random crop",
+             "center crop",
              "color jitter"]
 file = open(aug_path + 'augmentation_types_imbalanced.txt', 'w')
 for item in aug_types:

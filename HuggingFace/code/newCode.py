@@ -1,31 +1,31 @@
 import os
 
-from transformers import ConvNextForImageClassification, \
-    ConvNextFeatureExtractor
+from transformers import ConvNextForImageClassification, ConvNextFeatureExtractor
 
 from Training import Training
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
 
-epoch = 6
-train_data_path = "data/raw_data/72_8_20/384/"
+epoch = 10
+train_data_path = "data/raw_data/92_8/384/"
 # test_data_path = f"data/raw_data/data_{d_type}_split/val/"
-model_path = "model/72_8_20/raw/"
-result_path = "model/72_8_20/raw/"
+model_path = "model/72_8_20/aug/"
+result_path = "model/72_8_20/aug/"
 
-pretrained_model = "facebook/convnext-large-384-22k-1k"
+pretrained_model = "facebook/convnext-large-384-22k-1k"  # "facebook/regnet-y-10b-seer-in1k"  # "facebook/regnet-y-320-seer-in1k"
 resolution = 384
-batch = 2
+batch = 8
 model_name = f'convnext_l_raw_{resolution}r_{epoch}e_{batch}b'
 
 train, _, id2label, label2id = Training().read_image(path=train_data_path + 'train/', test_ratio=0)
 test, _, _, _ = Training().read_image(path=train_data_path + "val/", test_ratio=0)
 print("Train test obtained.")
 
-model = ConvNextForImageClassification.from_pretrained(pretrained_model, num_labels=len(label2id), label2id=label2id,
+model = ConvNextForImageClassification.from_pretrained(pretrained_model, num_labels=len(label2id),
+                                                       label2id=label2id,
                                                        id2label=id2label, ignore_mismatched_sizes=True)
-feature_extractor = ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True).from_pretrained(
+feature_extractor = ConvNextFeatureExtractor.from_pretrained(
     pretrained_model)  # ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True)
 
 training = Training(train=train, test=test, model_name=model_name, model_path=model_path, epoch=epoch, batch=batch,

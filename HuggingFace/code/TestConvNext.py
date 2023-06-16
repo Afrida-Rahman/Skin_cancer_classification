@@ -10,14 +10,14 @@ from imblearn.metrics import specificity_score, sensitivity_score
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, accuracy_score, \
     roc_auc_score, f1_score, top_k_accuracy_score
 from tqdm import tqdm
-from transformers import ConvNextConfig, ConvNextFeatureExtractor, ConvNextForImageClassification
+from transformers import ConvNextConfig, AutoFeatureExtractor, RegNetForImageClassification
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.chdir("..//..")
-model_folder = '/home/afrida/Downloads/convnext_l_eacc_384r_10e_16b/10_2023-06-07-10-08-06/'
+model_folder = '/home/afrida/Documents/pProjects/Skin_cancer_classification/model/72_8_20/raw/regnet_y_040_raw_384r_10e_16b/10_2023-06-14-18-16-11/'
 m_path = model_folder + "model/"
 f_path = model_folder + "feature_extractor/"
-result_path = '/home/afrida/Downloads/convnext_l_eacc_384r_10e_16b/'
+result_path = '/home/afrida/Documents/pProjects/Skin_cancer_classification/model/72_8_20/raw/regnet_y_040_raw_384r_10e_16b/'
 test_data_path = "data/raw_data/72_8_20/384/test"
 ext = 'test'
 config_path = m_path + 'config.json'
@@ -25,7 +25,7 @@ config_path = m_path + 'config.json'
 # config = json.load(cfg_file)
 config = ConvNextConfig.from_json_file(config_path)
 epoch = 10
-model_name = 'l_eacc'
+model_name = 'regnet_eacc'
 patch = config.patch_size
 resolution = config.image_size
 
@@ -37,10 +37,9 @@ test, _, _, _ = VisionDataset.fromImageFolder(
 )
 
 # test = glob(test_data_path + '/*')
-
-feature_extractor = ConvNextFeatureExtractor(do_normalize=True, size=resolution, do_rescale=True).from_pretrained(
-    f_path)
-model = ConvNextForImageClassification.from_pretrained(m_path)
+# (do_normalize=True, size=resolution, do_rescale=True)
+feature_extractor = AutoFeatureExtractor.from_pretrained(f_path)
+model = RegNetForImageClassification.from_pretrained(m_path)
 
 # feature_extractor = AutoImageProcessor.from_pretrained(f_path)
 # model = SwinV2ForImageClassification.from_pretrained(m_path)
