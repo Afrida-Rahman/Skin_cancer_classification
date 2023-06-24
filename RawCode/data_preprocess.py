@@ -4,6 +4,7 @@ from glob import glob
 import numpy as np
 import pandas as pd
 import splitfolders
+import torch
 import torchvision.transforms as fn
 import torchvision.transforms as transforms
 from PIL import Image
@@ -115,11 +116,12 @@ def normalize_img(file_path):
         ])
 
         img_nor = transform_norm(img)
+        img_nor = img_nor.numpy().astype(np.float16)
+        img_nor = torch.Tensor(img_nor)
         transform = transforms.ToPILImage()
-
-        img = transform(img_nor)
+        img_nor = transform(img_nor)
         os.remove(file_path + '/' + i.split('/')[-1])
-        img.save(file_path + '/' + i.split('/')[-1])
+        img_nor.save(file_path + '/' + i.split('/')[-1])
 
 
 ###  SPLIT ###
