@@ -5,18 +5,18 @@ from PIL import Image
 from numpy import random
 
 os.chdir("..")
-file_path = f'data/sensor_data/pytorch/aug_imbalanced/'
-result_path = f'data/sensor_data/pytorch/aug_balanced/'
+file_path = f'data/aug_data/92_8/384/train/'
+result_path = f'data/aug_data/92_8/384/b_train/'
 # raw_data_path = f"data/raw_data/data_{d_type}_split/train/"
 
-ctg = ['akiec', 'bcc', 'df', 'vasc']
+ctg = ['akiec', 'bcc', 'vasc']
 
 
 # copy_tree(raw_data_path, result_path)
 
 
 def select(ctg):
-    selection_num = 1099  # - len(glob(result_path + ctg + '/*'))
+    selection_num = 1020  # - len(glob(result_path + ctg + '/*'))
     files = glob(file_path + ctg + '/*')
     random.shuffle(files)
     # print(f"{ctg} = {files[:2]}")

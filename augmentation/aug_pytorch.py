@@ -56,8 +56,8 @@ def augmentation(filepath, aug_path):
     jitter_img.save(aug_path + img + '_jitter.png')
 
 
-file_path = 'data/raw_data/72_8_20/384/val/'
-aug_path = 'data/aug_data/72_8_20/384/imbalanced/val/'
+file_path = 'data/raw_data/92_8/384/train/'
+aug_path = 'data/aug_data/92_8/384/train/'
 
 aug_types = ['original image',
              'horizontal flip',
